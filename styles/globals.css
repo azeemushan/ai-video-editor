@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark light;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    Fira Sans,
+    Droid Sans,
+    Helvetica Neue,
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer base {
+  input:not([type='checkbox']):not([type='radio']),
+  textarea {
+    @apply rounded !important;
+  }
+}
+
+@layer components {
+  #__next {
+    @apply h-full;
+  }
+
+  .btn {
+    @apply rounded normal-case;
+  }
+
+  .modal-box {
+    @apply rounded;
+  }
+
+  .btn-primary:focus-visible {
+    @apply outline-primary;
+  }
+
+  .btn-error:focus-visible {
+    @apply outline-error;
+  }
+}
+
+.btn-md {
+  @apply min-h-8 h-10;
+}
+
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #555555 #f0f0f0;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #555555;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}
+
+.scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+.video_par .react-player-wrapper {
+  width: 300px;
+}
