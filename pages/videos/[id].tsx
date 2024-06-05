@@ -75,7 +75,7 @@ const FetchingVideo: NextPageWithLayout = ({
           setDbVideoObj(res.data.data);
         });
       
-      alert(message);
+      
 
       setVideoData(videoData);
     } catch (error) {
@@ -121,7 +121,7 @@ const FetchingVideo: NextPageWithLayout = ({
                   .then((res) => {
                     console.log(res.data);
                     if (res.data.status === 'true') {
-                      alert(res.data.message);
+                      
                       setDbVideoObj(res.data.data);
                     }
                   });
