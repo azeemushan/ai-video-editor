@@ -38,8 +38,8 @@ export const updateVideoClip = async (data: any) => {
     const { clip_id, title, src_url } = data;
 
     // Update the video clip with the given clip_id
-    const updatedClip = await prisma.videoClips.update({
-      where: { exportId: clip_id },
+    const updatedClip = await prisma.videoClips.updateMany({
+      where: { exportId:  clip_id  },
       data: {
         title: title,
         clipSrc: src_url,

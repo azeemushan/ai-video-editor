@@ -231,10 +231,9 @@ const FetchingVideo: NextPageWithLayout = ({
               if (res.data.status === 'ready') {
 
                 if (readyClips.length !== storedData.length) {
-                setReadyClips((prevReadyClips) => [
-                  ...prevReadyClips,
-                  res.data,
-                ]);
+                  if (!readyClips.some((readyClip) => readyClip.id === res.data.id)) {
+                    setReadyClips((prevReadyClips) => [...prevReadyClips, res.data]);
+                  }
               }
 
               }
@@ -260,25 +259,39 @@ const FetchingVideo: NextPageWithLayout = ({
     if (readyClips.length > 0) {
       if(readClipsRef){
       console.log('Ready Clips:', readyClips);
-      const promises = readyClips.map((clip) => {
-        return axios
+      axios
         .put('/api/videoClips/clips', {
      
-          clip_id: clip.id,
-          title:clip.name,
-          src_url:clip.src_url,
+          exportArray: JSON.stringify(readyClips) 
      
      
         })
         .then((res) => {
-          
-        });
-      });
-        Promise.all(promises).then(() => {
-
           router.push(`/videos/moments/${id}`)
           
         });
+
+
+
+      // const promises = readyClips.map((clip) => {
+      //   return axios
+      //   .put('/api/videoClips/clips', {
+     
+      //     clip_id: clip.id,
+      //     title:clip.name,
+      //     src_url:clip.src_url,
+     
+     
+      //   })
+      //   .then((res) => {
+          
+      //   });
+      // });
+      //   Promise.all(promises).then(() => {
+
+          // router.push(`/videos/moments/${id}`)
+          
+      //   });
     }
     }
     

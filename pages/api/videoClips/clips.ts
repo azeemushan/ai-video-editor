@@ -66,14 +66,33 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
 
 
 const handlePUT = async (req: NextApiRequest, res: NextApiResponse) => {
-  const {clip_id,title,src_url}:any = req.body;
+  const { exportArray }: any = req.body;
 
   try {
-    const updatedVideo = await updateVideoClip({ title,src_url,clip_id });
-    res.status(200).json({ status: 'true', message: 'Video clips updated', data: updatedVideo });
+    const exportParse = JSON.parse(exportArray);
+    console.log(exportParse)
+    let countForRes = 0;
+
+    for (const clip of exportParse) {
+      const updateVideo =  await updateVideoClip({ title: clip.name, src_url: clip.src_url, clip_id: clip.id });
+      if(updateVideo){
+        countForRes++
+
+      }
+    }
+    if(countForRes ===exportParse.length){
+      countForRes=0
+      res.status(200).json({ status: 'true', message: 'Video clips updated', data: {} });
+
+    }else {
+      countForRes
+      res.status(500).json({ status: 'false', message: 'Not all video clips were updated', data: {} });
+    }
+
+    
+
   } catch (error) {
-    res.json({ status: 'false', message: 'video clips not updated', data: {} });
+    console.error('Error updating video clips:', error);
+    res.status(500).json({ status: 'false', message: 'Video clips not updated', data: {} });
   }
-
-
 };
