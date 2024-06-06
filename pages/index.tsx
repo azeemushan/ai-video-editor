@@ -24,7 +24,7 @@ const Home: NextPageWithLayout = () => {
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="sitemap" content="/sitemap.xml" />
-        <script src="https://cdn.tailwindcss.com" defer></script>
+
         <link rel="canonical" href="https://videotap.com" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:type" content="website" />
