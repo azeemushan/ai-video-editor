@@ -86,6 +86,3 @@ a {
 .scrollbar::-webkit-scrollbar-button {
   display: none;
 }
-.video_par .react-player-wrapper {
-  width: 300px;
-}
