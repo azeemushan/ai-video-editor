@@ -16,6 +16,26 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'files.stripe.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'zetasoft.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 's2smark.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'codvets.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets-global.website-files.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'oraseya.com',
+      },
     ],
   },
   i18n,
