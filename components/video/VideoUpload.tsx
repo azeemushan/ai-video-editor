@@ -72,7 +72,7 @@ const VideoUpload: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
   <div
     onClick={handleOpenModal}
-    className="bg-purple-200 flex flex-col items-center justify-center rounded-lg cursor-pointer aspect-w-1 aspect-h-1"
+    className="bg-purple-200 flex flex-col items-center py-20 justify-center rounded-lg cursor-pointer aspect-w-1 aspect-h-1"
   >
     <FaPlus className="text-purple-500 text-xl md:text-2xl lg:text-3xl" />
     
