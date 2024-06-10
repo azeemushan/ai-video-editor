@@ -5,7 +5,7 @@ import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { getVideoById } from 'models/uploadedVideo';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import {  Loading } from '@/components/shared';
@@ -28,6 +28,7 @@ const FetchingVideo: NextPageWithLayout = ({
   const [readyClips, setReadyClips] = useState<any[]>([]);
   const [readClipsRef,setReadyClipsRef] = useState(false);
   const [loading,setLoading] = useState(false);
+  console.log('video data',videoData)
   
   
 
@@ -65,7 +66,6 @@ const FetchingVideo: NextPageWithLayout = ({
         conVideoId: videoData.id,
         videoId: id,
       });
-      const { message } = conVideoUpatedResponse.data;
       setDbVideoObj(conVideoUpatedResponse.data.data);
       axios
         .post('/api/video/UploadVideo', {
@@ -78,6 +78,7 @@ const FetchingVideo: NextPageWithLayout = ({
       
 
       setVideoData(videoData);
+      console.log(`video  data`,videoData) 
     } catch (error) {
       console.error('Error creating video or fetching clips:', error);
     }
@@ -187,7 +188,7 @@ const FetchingVideo: NextPageWithLayout = ({
               },
             }
           )
-          .then((res) => {
+          .then(() => {
             return axios
               .post('/api/videoClips/clips', {
                 conVideoId: clip.video_id,
@@ -266,7 +267,7 @@ const FetchingVideo: NextPageWithLayout = ({
      
      
         })
-        .then((res) => {
+        .then(() => {
           router.push(`/videos/moments/${id}`)
           
         });

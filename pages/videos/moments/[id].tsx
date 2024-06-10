@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import Link from 'next/link';
@@ -67,7 +67,6 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const { locale } = context;
-  const { id }: any = context.params;
 
 
 
