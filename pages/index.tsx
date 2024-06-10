@@ -5,14 +5,14 @@ import type { NextPageWithLayout } from 'types';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
-import useTheme from 'hooks/useTheme';
+
 import env from '@/lib/env';
 import Ed from '../public/Ed.png'
 import Image from 'next/image';
 
 const Home: NextPageWithLayout = () => {
   const { t } = useTranslation('common');
-  const { toggleTheme, selectedTheme } = useTheme();
+  
 
   return (
     <>
@@ -156,10 +156,10 @@ const Home: NextPageWithLayout = () => {
                 </div>
                 <div className="mb-14 mt-20 flex items-center justify-center">
                   <div className="isolate mt-14 items-center space-y-2 md:flex md:-space-x-2 md:space-y-0">
-                    <img className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white delay-1000 hover:scale-[1200%]" src="/azeeem.jpg" alt="" />
-                    <img className="relative z-20 inline-block h-10 w-10 rounded-full ring-2 ring-white" src="/hasnain.jpg" alt="" />
-                    <img className="relative z-10 inline-block h-10 w-10 rounded-full ring-2 ring-white" src="/hassan.jpg" alt="" />
-                    <img className="relative z-0 inline-block h-10 w-10 rounded-full ring-2 ring-white" src="/jenny.jpg" alt="" />
+                    <Image className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white delay-1000 hover:scale-[1200%]" src="/azeeem.jpg" alt="" />
+                    <Image className="relative z-20 inline-block h-10 w-10 rounded-full ring-2 ring-white" src="/hasnain.jpg" alt="" />
+                    <Image className="relative z-10 inline-block h-10 w-10 rounded-full ring-2 ring-white" src="/hassan.jpg" alt="" />
+                    <Image className="relative z-0 inline-block h-10 w-10 rounded-full ring-2 ring-white" src="/jenny.jpg" alt="" />
                     <div className="text-sm text-neutral-500 md:pl-6">{t('creators-have-repurposed')}</div>
                   </div>
                 </div>
@@ -226,35 +226,35 @@ const Home: NextPageWithLayout = () => {
                     {t('some-awesome-marketing-teams')}
                   </h2>
                   <div className="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-12 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 sm:gap-y-14 lg:mx-0 lg:max-w-none lg:grid-cols-5" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    <img
+                    <Image
                       className="col-span-2 max-h-12 object-contain lg:col-span-1"
                       src="https://zetasoft.org/wp-content/uploads/2022/12/cropped-cropped-zetasoftLogo-removebg-preview.png"
                       alt="Zetasoft"
                       width="258"
                       height="88"
                     />
-                    <img
+                    <Image
                       className="col-span-2 max-h-9 object-contain lg:col-span-1"
                       src="https://s2smark.com/assets/img/logo/s2s-logo-1.png"
                       alt="GitHub"
                       width="158"
                       height="48"
                     />
-                    <img
+                    <Image
                       className="col-span-2 max-h-12 object-contain lg:col-span-1"
                       src="https://codvets.com/wp-content/uploads/2021/04/Asset-1-1.png"
                       alt="Google"
                       width="158"
                       height="48"
                     />
-                    <img
+                    <Image
                       className="col-span-2 col-start-2 max-h-12object-contain sm:col-start-auto lg:col-span-1"
                       src="https://assets-global.website-files.com/6626a8927cbc7682875d608c/662d4619c16c8483da10ab94_Group%2054.png"
                       alt="Statamic"
                       width="158"
                       height="48"
                     />
-                    <img
+                    <Image
                       className="col-span-2 max-h-16 object-contain sm:col-start-2 lg:col-span-1"
                       src="https://oraseya.com/wp-content/uploads/2023/11/OraseyaLogo75pxForIcon.png"
                       alt="ORSEYA"
@@ -489,11 +489,11 @@ const Home: NextPageWithLayout = () => {
               <div className="space-y-4">
                 <h3 className="font-semibold text-neutral-100">{t('company')}</h3>
                 <div className="flex flex-column flex-wrap gap-4 md:flex-col">
-                  <a href="#" className="text-sm text-neutral-400">{t('blog')}</a>
-                  <a href="#" className="text-sm text-neutral-400">{t('pricing')}</a>
-                  <a href="#" className="text-sm text-neutral-400">{t('terms-of-service')}</a>
-                  <a href="/" className="text-sm text-neutral-400">{t('privacy-policy')}</a>
-                  <a href="/" className="text-sm text-neutral-400">{t('contact-us')}</a>
+                  <Link href="#" className="text-sm text-neutral-400">{t('blog')}</Link>
+                  <Link href="#" className="text-sm text-neutral-400">{t('pricing')}</Link>
+                  <Link href="#" className="text-sm text-neutral-400">{t('terms-of-service')}</Link>
+                  <Link href="/" className="text-sm text-neutral-400">{t('privacy-policy')}</Link>
+                  <Link href="/" className="text-sm text-neutral-400">{t('contact-us')}</Link>
                 </div>
               </div>
               <div className="space-y-4">
