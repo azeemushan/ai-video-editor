@@ -60,6 +60,7 @@ model User {
   image                  String?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @default(now())
+  user_type              UserType  @default(USER)
   invalid_login_attempts Int       @default(0)
   lockedAt               DateTime?
 
@@ -68,6 +69,12 @@ model User {
   sessions       Session[]
   invitations    Invitation[]
   uploadedVideos UploadedVideo[]
+  Subscriptions  Subscriptions[]
+}
+
+enum UserType {
+  USER
+  ADMIN
 }
 
 model Team {
@@ -200,7 +207,7 @@ model UploadedVideo {
 
 model VideoClips {
   id            Int           @id @default(autoincrement())
-  conVideoId    String?       
+  conVideoId    String?
   clip_id       String?       @unique
   exportId      String?       @unique
   clipSrc       String?
@@ -209,6 +216,45 @@ model VideoClips {
   uploadedVideo UploadedVideo @relation(fields: [videoId], references: [id], onDelete: Cascade)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @default(now()) @updatedAt
+}
+
+model SubscriptionPackage {
+  id                 Int      @id @default(autoincrement())
+  price              Int
+  upload_video_limit Int
+  generate_clips     Int
+  max_length_video   String
+  total_min          Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  Subscriptions Subscriptions[]
+}
+
+model Subscriptions {
+  id                  Int      @id @default(autoincrement())
+  subscription_pkg_id Int
+  user_id             String
+  start_date          DateTime
+  end_date            DateTime
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  subscriptionPackage SubscriptionPackage @relation(fields: [subscription_pkg_id], references: [id])
+  user                User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  subscriptionUsage   SubscriptionUsage[]
+}
+
+model SubscriptionUsage {
+  id               Int      @id @default(autoincrement())
+  subscriptions_id Int
+  upload_count     Int
+  clip_count       Int
+  min              Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  subscription Subscriptions @relation(fields: [subscriptions_id], references: [id], onDelete: Cascade)
 }
 
 model jackson_store {
