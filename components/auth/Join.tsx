@@ -66,6 +66,8 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
       recaptchaRef.current?.reset();
 
       if (!response.ok) {
+        
+        
         toast.error(json.error.message);
         return;
       }
@@ -75,6 +77,7 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
       if (json.data.confirmEmail) {
         router.push('/auth/verify-email');
       } else {
+        
         toast.success(t('successfully-joined'));
         router.push('/auth/login');
       }

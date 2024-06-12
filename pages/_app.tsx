@@ -17,6 +17,7 @@ import { AccountLayout } from '@/components/layouts';
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { session, ...props } = pageProps;
+  console.log(session)
 
   // Add mixpanel
   useEffect(() => {

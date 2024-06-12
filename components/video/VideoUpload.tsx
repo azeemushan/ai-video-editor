@@ -67,6 +67,12 @@ const VideoUpload: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    axios.get('/api/subscriptionPackages/subPkg').then((res) => {
+      console.log(res.data.data);
+    });
+  }, []);
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

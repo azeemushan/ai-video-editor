@@ -177,14 +177,14 @@ async function seedSubscriptionPackages() {
   ];
 
   for (const pkg of packages) {
-    const existingPackage = await client.subscriptionPackage.findUnique({
+    const existingPackage = await client.subscriptionPackage.findFirst({
       where: {
-        price_upload_video_limit_generate_clips_max_length_video: {
+
           price: pkg.price,
           upload_video_limit: pkg.upload_video_limit,
           generate_clips: pkg.generate_clips,
           max_length_video: pkg.max_length_video,
-        },
+
       },
     });
 
