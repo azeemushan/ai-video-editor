@@ -9,6 +9,8 @@ const ADMIN_EMAIL = 'admin@example.com';
 const ADMIN_PASSWORD = 'admin@123';
 const USER_EMAIL = 'user@example.com';
 const USER_PASSWORD = 'user@123';
+const PRICE_MULTIPLIER = 15;
+
 async function seedUsers() {
   const newUsers: any[] = [];
   await createRandomUser(ADMIN_EMAIL, ADMIN_PASSWORD);
@@ -148,12 +150,62 @@ async function seedInvitations(teams: any[], users: any[]) {
 
   return newInvitations;
 }
+async function seedSubscriptionPackages() {
+  const packages = [
+    {
+      price: 29,
+      upload_video_limit: 10,
+      generate_clips: 100,
+      max_length_video: '00:45:00',
+      total_min: 29 * PRICE_MULTIPLIER,
+    },
+    {
+      price: 79,
+      upload_video_limit: 30,
+      generate_clips: 300,
+      max_length_video: '02:00:00',
+      total_min: 79 * PRICE_MULTIPLIER,
+    },
+    {
+      price: 189,
+      upload_video_limit: 100,
+      generate_clips: 1000,
+      max_length_video: '03:00:00',
+      total_min: 189 * PRICE_MULTIPLIER,
+    },
+    // Add other packages if needed
+  ];
+
+  for (const pkg of packages) {
+    const existingPackage = await client.subscriptionPackage.findUnique({
+      where: {
+        price_upload_video_limit_generate_clips_max_length_video: {
+          price: pkg.price,
+          upload_video_limit: pkg.upload_video_limit,
+          generate_clips: pkg.generate_clips,
+          max_length_video: pkg.max_length_video,
+        },
+      },
+    });
+
+    if (!existingPackage) {
+      await client.subscriptionPackage.create({
+        data: pkg,
+      });
+      console.log('Seeded subscription package', pkg);
+    } else {
+      console.log('Subscription package already exists', pkg);
+    }
+  }
+}
 
 async function init() {
-  const users = await seedUsers();
-  const teams = await seedTeams();
-  await seedTeamMembers(users, teams);
-  await seedInvitations(teams, users);
+  // const users = await seedUsers();
+  // const teams = await seedTeams();
+  // await seedTeamMembers(users, teams);
+  // await seedInvitations(teams, users);
+  await seedSubscriptionPackages();
 }
 
 init();
+
