@@ -219,16 +219,23 @@ model VideoClips {
 }
 
 model SubscriptionPackage {
-  id                 Int      @id @default(autoincrement())
+  id                 Int              @id @default(autoincrement())
   price              Int
   upload_video_limit Int
   generate_clips     Int
   max_length_video   String
   total_min          Int
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  subscription_type  SubscriptionType
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 
   Subscriptions Subscriptions[]
+}
+
+enum SubscriptionType {
+  BASIC
+  PRO
+  PREMIUM
 }
 
 model Subscriptions {

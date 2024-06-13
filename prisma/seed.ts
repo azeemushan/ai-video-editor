@@ -158,6 +158,7 @@ async function seedSubscriptionPackages() {
       generate_clips: 100,
       max_length_video: '00:45:00',
       total_min: 29 * PRICE_MULTIPLIER,
+      subscription_type:'BASIC'
     },
     {
       price: 79,
@@ -165,6 +166,7 @@ async function seedSubscriptionPackages() {
       generate_clips: 300,
       max_length_video: '02:00:00',
       total_min: 79 * PRICE_MULTIPLIER,
+      subscription_type:'PRO'
     },
     {
       price: 189,
@@ -172,6 +174,7 @@ async function seedSubscriptionPackages() {
       generate_clips: 1000,
       max_length_video: '03:00:00',
       total_min: 189 * PRICE_MULTIPLIER,
+      subscription_type:'PREMIUM'
     },
     // Add other packages if needed
   ];
@@ -184,6 +187,7 @@ async function seedSubscriptionPackages() {
           upload_video_limit: pkg.upload_video_limit,
           generate_clips: pkg.generate_clips,
           max_length_video: pkg.max_length_video,
+          subscription_type: pkg.subscription_type,
 
       },
     });
