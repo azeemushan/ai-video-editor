@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const client = new PrismaClient();
 const { hash } = require('bcryptjs');
 const { randomUUID } = require('crypto');
+const { addMonths } = require('date-fns');
 let USER_COUNT = 10;
 const TEAM_COUNT = 5;
 const ADMIN_EMAIL = 'admin@example.com';
@@ -203,12 +204,48 @@ async function seedSubscriptionPackages() {
   }
 }
 
+async function seedSingleSubscription() {
+  const firstUser = await client.user.findFirst();
+  const firstPackage = await client.subscriptionPackage.findFirst();
+
+  if (firstUser && firstPackage) {
+    // Check if a subscription already exists for the first user and the first package
+    const existingSubscription = await client.subscriptions.findFirst({
+      where: {
+        user_id: firstUser.id,
+        subscription_pkg_id: firstPackage.id,
+      },
+    });
+
+    if (!existingSubscription) {
+      const startDate = new Date();
+      const endDate = addMonths(startDate, 1);
+
+      await client.subscriptions.create({
+        data: {
+          subscription_pkg_id: firstPackage.id,
+          user_id: firstUser.id,
+          start_date: startDate,
+          end_date: endDate,
+          status: true,
+        },
+      });
+
+      console.log(`Seeded subscription for user ${firstUser.email} with package ${firstPackage.subscription_type}`);
+    } else {
+      console.log(`Subscription already exists for user ${firstUser.email} with package ${firstPackage.subscription_type}`);
+    }
+  }
+}
+
+
 async function init() {
   // const users = await seedUsers();
   // const teams = await seedTeams();
   // await seedTeamMembers(users, teams);
   // await seedInvitations(teams, users);
   await seedSubscriptionPackages();
+  await seedSingleSubscription(); 
 }
 
 init();

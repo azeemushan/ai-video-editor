@@ -7,10 +7,10 @@ import {  useSession } from 'next-auth/react';
 
 const Dashboard: NextPageWithLayout = () => {
   const {data} =  useSession();
-  console.log(`=========================dash session`)
-  console.log(data?.user.user_type)
+
   return <>
-  <VideoUpload />
+  <h2>ADMIN DASHBOARD</h2>
+
   </>
   
 

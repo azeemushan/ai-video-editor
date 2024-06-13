@@ -237,7 +237,6 @@ enum SubscriptionType {
   PRO
   PREMIUM
 }
-
 model Subscriptions {
   id                  Int      @id @default(autoincrement())
   subscription_pkg_id Int

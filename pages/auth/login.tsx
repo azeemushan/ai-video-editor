@@ -37,7 +37,7 @@ const Login: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ csrfToken, authProviders, recaptchaSiteKey }) => {
   const router = useRouter();
-  const { status } = useSession();
+  const { status,data } = useSession();
   const { t } = useTranslation('common');
   const [recaptchaToken, setRecaptchaToken] = useState<string>('');
   const [message, setMessage] = useState<Message>({ text: null, status: null });
@@ -64,9 +64,11 @@ const Login: NextPageWithLayout<
     }
   }, [error, success]);
 
-  const redirectUrl = token
-    ? `/invitations/${token}`
-    : env.redirectIfAuthenticated;
+  
+
+    const redirectUrl = token 
+  ? `/invitations/${token}`
+  : (data?.user.user_type === "USER" ? env.redirectIfAuthenticated : '/admin/dashboard');
 
   const formik = useFormik({
     initialValues: {

@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
+
 
 const pricingPlans = {
   monthly: [
@@ -177,13 +179,13 @@ const Pricing: React.FC = () => {
                   ))}
                 </ul>
               </div>
-              <a href='/admin/subPkg/editSubscribtion'
+              <Link href='/admin/subPkg/editSubscription'
                   className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
                 >
                   <span className="text-sm font-semibold whitespace-nowrap">
                     {plan.editButton}
                   </span>
-                </a>
+                </Link>
             </section>
           ))}
         </div>
