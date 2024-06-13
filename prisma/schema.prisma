@@ -244,6 +244,7 @@ model Subscriptions {
   user_id             String
   start_date          DateTime
   end_date            DateTime
+  status              Boolean  @default(true)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
