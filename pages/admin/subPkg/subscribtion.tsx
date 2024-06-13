@@ -1,11 +1,4 @@
-
 import React, { useState } from 'react';
-import { type ReactElement } from 'react';
-import type { NextPageWithLayout } from 'types';
-import { GetServerSidePropsContext } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import env from '@/lib/env';
-// import { useTranslation } from 'next-i18next';
 
 const pricingPlans = {
   monthly: [
@@ -22,6 +15,7 @@ const pricingPlans = {
       cardClass: 'bg-[rgb(248,236,236)] text-slate-950',
       buttonClass: 'border border-slate-200 text-slate-950 bg-white',
       buttonText: 'Get Started',
+      editButton: 'Edit',
     },
     {
       name: 'Pro',
@@ -37,6 +31,7 @@ const pricingPlans = {
       cardClass: 'bg-slate-950 text-white',
       buttonClass: 'bg-white text-slate-950 border-white',
       buttonText: 'Get Started',
+      editButton: 'Edit',
     },
     {
       name: 'Pro+',
@@ -52,6 +47,7 @@ const pricingPlans = {
       cardClass: 'bg-slate-200 text-slate-950',
       buttonClass: 'border border-slate-200 text-white bg-slate-950',
       buttonText: 'Get Started',
+      editButton: 'Edit',
     },
   ],
   yearly: [
@@ -68,6 +64,7 @@ const pricingPlans = {
       cardClass: 'bg-[rgb(248,236,236)] text-slate-950',
       buttonClass: 'border border-slate-200 text-slate-950 bg-white',
       buttonText: 'Get Started',
+      editButton: 'Edit',
     },
     {
       name: 'Pro',
@@ -83,6 +80,7 @@ const pricingPlans = {
       cardClass: 'bg-slate-950 text-white',
       buttonClass: 'bg-white text-slate-950 border-white',
       buttonText: 'Get Started',
+      editButton: 'Edit',
     },
     {
       name: 'Pro+',
@@ -98,11 +96,12 @@ const pricingPlans = {
       cardClass: 'bg-slate-200 text-slate-950',
       buttonClass: 'border border-slate-200 text-white bg-slate-950',
       buttonText: 'Get Started',
+      editButton: 'Edit',
     },
   ],
 };
 
-const Pricing: NextPageWithLayout = () => {
+const Pricing: React.FC = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
 
   return (
@@ -178,6 +177,13 @@ const Pricing: NextPageWithLayout = () => {
                   ))}
                 </ul>
               </div>
+              <a href='/admin/subPkg/editSubscribtion'
+                  className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
+                >
+                  <span className="text-sm font-semibold whitespace-nowrap">
+                    {plan.editButton}
+                  </span>
+                </a>
             </section>
           ))}
         </div>
@@ -187,32 +193,6 @@ const Pricing: NextPageWithLayout = () => {
       </div>
     </div>
   );
-};
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  // Redirect to login page if landing page is disabled
-  if (env.hideLandingPage) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: true,
-      },
-    };
-  }
-
-  
-
-  const { locale } = context;
-
-  return {
-    props: {
-      ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
-    },
-  };
-};
-
-Pricing.getLayout = function getLayout(page: ReactElement) {
-  return <>{page}</>;
 };
 
 export default Pricing;
