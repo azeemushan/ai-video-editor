@@ -108,9 +108,9 @@ const Home: NextPageWithLayout = () => {
             <a href="#" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
               {t('features')}
             </a>
-            <a href="/pricing" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
+            <Link href="/pricing" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
               {t('pricing')}
-            </a>
+            </Link>
             <a href="#" target="_blank" rel="noopener noreferrer" className="hidden text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900 xl:block">
               {t('refer-earn')}
             </a>
