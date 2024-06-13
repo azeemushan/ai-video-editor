@@ -12,6 +12,7 @@ const pricingPlans = {
         'Generate 100 clips monthly',
         'HD download',
       ],
+      cardClass: 'bg-[rgb(248,236,236)] text-slate-950',
       buttonClass: 'border border-slate-200 text-slate-950 bg-white',
       buttonText: 'Get Started',
     },
@@ -26,7 +27,8 @@ const pricingPlans = {
         '4K download',
         'Translate to 29 languages (AI Dubbing)',
       ],
-      buttonClass: 'bg-slate-950 border-slate-950 text-white',
+      cardClass: 'bg-slate-950 text-white',
+      buttonClass: 'bg-white text-slate-950 border-white',
       buttonText: 'Get Started',
     },
     {
@@ -40,7 +42,8 @@ const pricingPlans = {
         '4K download',
         'Translate to 29 languages (AI Dubbing)',
       ],
-      buttonClass: 'border border-slate-200 text-slate-950 bg-white',
+      cardClass: 'bg-slate-200 text-slate-950',
+      buttonClass: 'border border-slate-200 text-white bg-slate-950',
       buttonText: 'Get Started',
     },
   ],
@@ -55,6 +58,7 @@ const pricingPlans = {
         'Generate 100 clips monthly',
         'HD download',
       ],
+      cardClass: 'bg-[rgb(248,236,236)] text-slate-950',
       buttonClass: 'border border-slate-200 text-slate-950 bg-white',
       buttonText: 'Get Started',
     },
@@ -69,7 +73,8 @@ const pricingPlans = {
         '4K download',
         'Translate to 29 languages (AI Dubbing)',
       ],
-      buttonClass: 'bg-slate-950 border-slate-950 text-white',
+      cardClass: 'bg-slate-950 text-white',
+      buttonClass: 'bg-white text-slate-950 border-white',
       buttonText: 'Get Started',
     },
     {
@@ -83,7 +88,8 @@ const pricingPlans = {
         '4K download',
         'Translate to 29 languages (AI Dubbing)',
       ],
-      buttonClass: 'border border-slate-200 text-slate-950 bg-white',
+      cardClass: 'bg-slate-200 text-slate-950',
+      buttonClass: 'border border-slate-200 text-white bg-slate-950',
       buttonText: 'Get Started',
     },
   ],
@@ -120,8 +126,9 @@ const Pricing: React.FC = () => {
         </div>
         <div className="flex flex-col md:flex-row gap-8 justify-center">
           {pricingPlans[planType].map((plan) => (
-            <section key={plan.name} className="flex-1 p-12 rounded-2xl bg-slate-200">
+            <section key={plan.name} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
               <div className="flex-col flex justify-center items-center text-center">
+                <h2 className="text-2xl font-semibold mb-4">{plan.name}</h2>
                 <div className="flex-1 flex justify-center">
                   <div className="h-auto flex gap-2 items-center">
                     <div className="w-20 h-auto shrink-0"></div>
@@ -168,7 +175,7 @@ const Pricing: React.FC = () => {
           ))}
         </div>
         <p className="text-sm font-normal mt-8 text-slate-700">
-          Need more? <a className="text-slate-500" href="#">Let's talk!</a>
+          Need more? <a className="text-slate-500" href="https://discord.gg/KcAcHdrSQU">Let's talk!</a>
         </p>
       </div>
     </div>
