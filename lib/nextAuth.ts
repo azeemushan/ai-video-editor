@@ -100,6 +100,7 @@ if (isAuthProviderEnabled('credentials')) {
           id: user.id,
           name: user.name,
           email: user.email,
+          user_type:user.user_type
         };
       },
     })
@@ -204,6 +205,7 @@ if (isAuthProviderEnabled('idp-initiated')) {
               .filter(Boolean)
               .join(' '),
             image: null,
+            
             ...profile,
           };
         }
@@ -246,6 +248,7 @@ async function createDatabaseSession(
     await adapter.createSession({
       sessionToken,
       userId: user.id,
+      
       expires,
     });
   }
@@ -293,6 +296,7 @@ export const getAuthOptions = (
         }
 
         const existingUser = await getUser({ email: user.email });
+        
         const isIdpLogin = account.provider === 'boxyhq-idp';
 
         // Handle credentials provider
@@ -358,8 +362,15 @@ export const getAuthOptions = (
       async session({ session, token, user }) {
         // When using JWT for sessions, the JWT payload (token) is provided.
         // When using database sessions, the User (user) object is provided.
+        
         if (session && (token || user)) {
           session.user.id = token?.sub || user?.id;
+          session.user.user_type =  token.user_type as string;
+          
+
+          
+          
+          
         }
 
         if (user?.name) {
@@ -375,7 +386,7 @@ export const getAuthOptions = (
         return session;
       },
 
-      async jwt({ token, trigger, session, account }) {
+      async jwt({ token, user,trigger, session, account , }) {
         if (trigger === 'signIn' && account?.provider === 'boxyhq-idp') {
           const userByAccount = await adapter.getUserByAccount!({
             providerAccountId: account.providerAccountId,
@@ -383,6 +394,11 @@ export const getAuthOptions = (
           });
 
           return { ...token, sub: userByAccount?.id };
+        }
+
+        if (user) {
+          token['user_type'] = user.user_type
+          
         }
 
         if (trigger === 'update' && 'name' in session && session.name) {

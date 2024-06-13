@@ -46,6 +46,7 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const profile = await oauthController.userInfo(token);
+  
 
   res.json(profile);
 };
