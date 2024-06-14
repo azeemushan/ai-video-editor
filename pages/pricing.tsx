@@ -6,6 +6,8 @@ import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import env from '@/lib/env';
 import FrontLayout from '@/components/layouts/FrontLayout';
+import { useTranslation } from 'next-i18next';
+
 // import { useTranslation } from 'next-i18next';
 
 const pricingPlans = {
@@ -105,16 +107,18 @@ const pricingPlans = {
 
 const Pricing: NextPageWithLayout = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
+  const { t } = useTranslation('common');
+
 
   return (
 
     <FrontLayout>
     <div className="max-w-5xl mx-auto px-3 text-center text-slate-950">
       <h1 className="text-4xl md:text-5xl font-semibold font-display my-8">
-        Plans
+        {t('Plans')}
       </h1>
       <p className="text-xl font-sans font-normal text-slate-600 my-8">
-        No hidden fees. Cancel anytime.
+        {t('no-hidden-fee')}
       </p>
       <div className="max-w-5xl mx-auto px-3 text-center">
         <div className="mx-auto mb-8 inline-flex gap-2 items-center justify-center bg-slate-200 p-1 rounded-2xl">
@@ -122,15 +126,15 @@ const Pricing: NextPageWithLayout = () => {
             onClick={() => setPlanType('monthly')}
             className={`px-6 py-3 h-12 rounded-xl ${planType === 'monthly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
           >
-            <span className="text-sm font-semibold">Monthly</span>
+            <span className="text-sm font-semibold">{t('Monthly')}</span>
           </button>
           <button
             onClick={() => setPlanType('yearly')}
             className={`px-6 py-3 h-12 rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
           >
-            <span className="text-sm font-semibold">Yearly</span>
+            <span className="text-sm font-semibold">{t('Yearly')}</span>
             <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
-              Save $190
+              {t('save-190')}
             </span>
           </button>
         </div>
@@ -156,7 +160,7 @@ const Pricing: NextPageWithLayout = () => {
                   </span>
                 </button>
                 <p className="text-sm font-normal mt-4 text-slate-500">
-                  Secured by Stripe
+                  {t('secured-stripe')}
                 </p>
                 <ul className="flex-1 self-start flex flex-col mt-8 gap-4 w-full">
                   {plan.features.map((feature) => (
@@ -185,7 +189,7 @@ const Pricing: NextPageWithLayout = () => {
           ))}
         </div>
         <p className="text-sm font-normal mt-8 text-slate-700">
-          Need more? <a className="text-slate-500" href="https://discord.gg/KcAcHdrSQU">Let's talk!</a>
+          {t('need-more')} <a className="text-slate-500" href="https://discord.gg/KcAcHdrSQU">{t('lets-talk')}</a>
         </p>
       </div>
     </div>

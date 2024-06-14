@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { type ReactElement } from 'react';
 import { useTranslation } from 'next-i18next';
 import type { NextPageWithLayout } from 'types';
@@ -13,11 +12,9 @@ import hassan from '../public/hassan.jpg'
 import jenny from '../public/jenny.jpg'
 import Image from 'next/image';
 import FrontLayout from '@/components/layouts/FrontLayout';
-import { getSession } from "next-auth/react";
 
-const Home: NextPageWithLayout = ({session}) => {
+const Home: NextPageWithLayout = () => {
   const { t } = useTranslation('common');
-  console.log(session)
   
   
 
@@ -345,11 +342,9 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   }
 
   const { locale } = context;
-  const session = await getSession(context);
 
   return {
     props: {
-      session,
       ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
     },
   };

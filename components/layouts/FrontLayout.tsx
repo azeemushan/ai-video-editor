@@ -8,14 +8,12 @@ import Ed from '@/public/Ed.png'
 
 interface FrontLayoutProps {
   children: React.ReactNode;
-  session:any;
 }
 
-const  FrontLayout =({ session,children }: FrontLayoutProps)  =>{
+const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
     
-    console.log(`email is =============`)
-    console.log(session)
+   
   return (
     <>
        <Head>
@@ -91,12 +89,12 @@ const  FrontLayout =({ session,children }: FrontLayoutProps)  =>{
             <a href="#" className="font-display flex items-center p-1.5">
               <Image src={Ed} className="w-6" alt="" />
 
-              <span className="ml-2 block font-semibold text-xl">Editur.ai</span>
+              <span className="ml-2 block font-semibold text-xl">{t('Editur')}</span>
             </a>
           </div>
           <div className="flex lg:hidden">
             <button type="button" className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-neutral-700">
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">{t('open_main')}</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
@@ -115,7 +113,7 @@ const  FrontLayout =({ session,children }: FrontLayoutProps)  =>{
           </div>
           <div className="hidden gap-x-7 lg:flex lg:flex-1 lg:items-center lg:justify-end">
             
-            <Link  href="/auth/join" className="rounded-full bg-violet-600 px-8 py-0.5 text-xs font-semibold leading-6 text-white" >{t('get-started')} <span className="text-[11px] opacity-90">- 2 {t('videos-free')}</span></Link>
+            <Link  href="/auth/join" className="rounded-full bg-violet-600 px-8 py-0.5 text-xs font-semibold leading-6 text-white" >{t('get-started')} <span className="text-[11px] opacity-90"> {t('videos-free')}</span></Link>
             <Link   href="/auth/login" className="text-sm font-semibold leading-6 text-neutral-700 hover:text-neutral-900" >{t('login')} <span aria-hidden="true">&rarr;</span></Link>
             
           </div>

@@ -63,7 +63,7 @@ const Subscription: NextPageWithLayout = () => {
   
    <div>
       <h1 className='mb-3 font-bold'>{t('subscriptions')}</h1>
-      <Table cols={columns} body={tableData} noMoreResults={false} />
+      <Table cols={columns} body={tableData as any} noMoreResults={false} />
     </div>
 
   </>
