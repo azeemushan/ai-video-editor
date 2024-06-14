@@ -95,7 +95,7 @@ const handleDELETE = async (req: NextApiRequest, res: NextApiResponse) => {
   sendAudit({
     action: 'dsync.connection.delete',
     crud: 'd',
-    user: teamMember.user,
+    user: teamMember.user as any,
     team: teamMember.team,
   });
 
