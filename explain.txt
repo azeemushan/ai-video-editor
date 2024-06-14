@@ -1,0 +1,3 @@
+subscription logic to check limit : 
+    when the subscription for user created we will automatically insert record for the same subscription with default values  usage table.
+    case: if user subscribe to subscription pkg  1 and after expiration  user again subscribe the subscription pkg 1 then there will be two records for subsciption 1 but  we get the subscription data like user active subscription  and from usage table  we will get record based on active subsciption and latest date.

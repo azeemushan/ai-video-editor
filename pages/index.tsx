@@ -123,6 +123,7 @@ const Home: NextPageWithLayout = () => {
           </div>
         </nav>
       </header>
+      
       <main>
         <div className="relative">
           <div className="mt-20 md:mt-0">

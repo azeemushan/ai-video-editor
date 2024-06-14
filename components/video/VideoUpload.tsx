@@ -48,10 +48,17 @@ const VideoUpload: React.FC = () => {
           origionalVideoLink: link,
         })
         .then(function (response: any) {
-          const { id } = response.data.data;
-          router.push(`/videos/${id}`);
+          
+          if(response.data.data ==="payment"){
+            
+            router.push(`/pricing`);
+            return false
 
-          console.log(response.data.data);
+          }
+          
+          const { id } = response.data.data;
+
+          router.push(`/videos/${id}`);
         })
         .catch(function (error) {
           console.log(error);
@@ -67,11 +74,7 @@ const VideoUpload: React.FC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    axios.get('/api/subscriptionPackages/subPkg').then((res) => {
-      console.log(res.data.data);
-    });
-  }, []);
+
 
   return (
     <div>

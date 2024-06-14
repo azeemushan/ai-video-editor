@@ -2,9 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from '@/lib/session';
 import { createVideo, getAllVideos, getVideoById, updateConVideoSrcField } from 'models/uploadedVideo';
 import { updateConVideoIdField } from 'models/uploadedVideo'; // Update with the correct path
-
-
-
+import { prisma } from '@/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -37,8 +35,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   const { origionalVideoLink,fetchVideoById,updateConVidSrcById,src_url,title }:any = req.body;
   const session = await getSession(req, res);
+  //  check usage
+  const subscription = await prisma.subscriptions.findFirst({
+    where: {
+      user_id: session?.user.id,
+      status: true,
+    },
+    include: {
+      subscriptionPackage: true,
+    },
+  });
 
-  if(src_url){
+  if (!subscription) {
+    return res.status(404).json({ message: 'No active subscription found for this user.' });
+  }
+  const latestSubscriptionUsage:any = await prisma.subscriptionUsage.findFirst({
+    where: {
+      subscriptions_id: subscription.id,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  if (
+    latestSubscriptionUsage.upload_count > subscription.subscriptionPackage.upload_video_limit ||
+    latestSubscriptionUsage.clip_count > subscription.subscriptionPackage.generate_clips
+  ) {
+  return  res.json({ status: 'false', message: 'payment required', data: 'payment' });
+  }
+
+  //  check usage
+
+if(src_url){
     const getVideo = await updateConVideoSrcField({id:updateConVidSrcById,userId:session?.user.id,conVideoSrc:src_url,conVideoTitle:title});
     if (getVideo) {
       res.status(200).json({ status: 'true', message: 'src field and tiltle field updated', data: getVideo });

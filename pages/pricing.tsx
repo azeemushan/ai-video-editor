@@ -5,6 +5,7 @@ import type { NextPageWithLayout } from 'types';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import env from '@/lib/env';
+import FrontLayout from '@/components/layouts/FrontLayout';
 // import { useTranslation } from 'next-i18next';
 
 const pricingPlans = {
@@ -106,6 +107,8 @@ const Pricing: NextPageWithLayout = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
 
   return (
+
+    <FrontLayout>
     <div className="max-w-5xl mx-auto px-3 text-center text-slate-950">
       <h1 className="text-4xl md:text-5xl font-semibold font-display my-8">
         Plans
@@ -186,6 +189,7 @@ const Pricing: NextPageWithLayout = () => {
         </p>
       </div>
     </div>
+    </FrontLayout>
   );
 };
 
