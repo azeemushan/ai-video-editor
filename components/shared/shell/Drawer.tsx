@@ -1,8 +1,6 @@
 import React from 'react';
-import TeamDropdown from '../TeamDropdown';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Brand from './Brand';
-import Navigation from './Navigation';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import {  useSession } from 'next-auth/react';
@@ -10,7 +8,6 @@ import {  useSession } from 'next-auth/react';
 import {
   FaTachometerAlt,
   FaInbox,
-  FaUsers,
   
 } from 'react-icons/fa';
 import { MdOutlineSubscriptions } from "react-icons/md";
@@ -23,7 +20,7 @@ interface DrawerProps {
 const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
   const { t } = useTranslation('common');
   const {data} =  useSession();
-    const {user_type}  = data?.user
+    const {user_type}:any  = data?.user || {}
   
 
   return (
@@ -78,7 +75,7 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                     <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
                       <FaInbox className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                       <span className="flex-1 ms-3 whitespace-nowrap">
-                        Subscription Packages
+                        {t('sub-pkg')}
                       </span>
                       
                     </div>
@@ -90,7 +87,7 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                       <MdOutlineSubscriptions className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                       
                       <span className="flex-1 ms-3 whitespace-nowrap">
-                        subscriptions
+                        {t('subscriptions')}
                       </span>
                     </div>
                   </Link>
