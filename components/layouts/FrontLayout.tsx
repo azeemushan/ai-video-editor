@@ -1,10 +1,13 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import Image from 'next/image';
 import Ed from '@/public/Ed.png'
+import {  useSession } from 'next-auth/react';
+
+
 
 interface FrontLayoutProps {
   children: React.ReactNode;
@@ -12,6 +15,9 @@ interface FrontLayoutProps {
 
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
+    const {data,status} =  useSession()
+    
+
     
    
   return (
@@ -107,6 +113,11 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
             <Link href="/pricing" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
               {t('pricing')}
             </Link>
+            { status === "authenticated" &&
+            <Link href="/dashboard" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
+              {t('Dashboard')}
+            </Link>
+            }
             <a href="#" target="_blank" rel="noopener noreferrer" className="hidden text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900 xl:block">
               {t('refer-earn')}
             </a>
@@ -217,6 +228,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
 
   );
 }
+
 
 
 
