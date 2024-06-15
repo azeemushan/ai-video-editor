@@ -17,7 +17,7 @@ declare module 'next-auth' {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-    user_type: string ;
+    user_type?: string|null ;
 
     
   }
