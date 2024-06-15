@@ -59,7 +59,6 @@ const FetchingVideo: NextPageWithLayout = ({
       );
 
       const videoData = videoResponse.data;
-      console.log('response from api after sending link>>>>>',videoData)
 
       // Update conVideoId field
       const conVideoUpatedResponse = await axios.put('/api/video/UploadVideo', {
@@ -78,7 +77,7 @@ const FetchingVideo: NextPageWithLayout = ({
       
 
       setVideoData(videoData);
-      console.log(`video  data`,videoData) 
+
     } catch (error) {
       console.error('Error creating video or fetching clips:', error);
     }
@@ -174,9 +173,6 @@ const FetchingVideo: NextPageWithLayout = ({
   }, [dbVideoObj]);
   useEffect(() => {
     if (exportClips.length === clips.length && clips.length > 0 && !allProcessed) {
-      console.log(exportClips)
-      
-
 
       const promises = exportClips.map((clip) => {
         return axios
@@ -197,6 +193,11 @@ const FetchingVideo: NextPageWithLayout = ({
                 videoId: id,
               })
               .then((res) => {
+                if(res.data.data === "payment"){
+                  router.push('/pricing')
+                  return false;
+
+                }
                 const newData = res.data.data;
                 setStoredData((prevStoredData) => [...prevStoredData, newData]);
               });
@@ -259,7 +260,6 @@ const FetchingVideo: NextPageWithLayout = ({
   useEffect(() => {
     if (readyClips.length > 0) {
       if(readClipsRef){
-      console.log('Ready Clips:', readyClips);
       axios
         .put('/api/videoClips/clips', {
      

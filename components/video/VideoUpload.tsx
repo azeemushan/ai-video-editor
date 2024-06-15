@@ -11,9 +11,11 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import ReactPlayer from 'react-player';
 import Link from 'next/link';
+import {  Loading } from '@/components/shared';
 
 const VideoUpload: React.FC = () => {
   const router = useRouter();
+  const [loading,setLoading] = useState(false);
   const { t } = useTranslation('common');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [video, setVideo] = useState<any[]>([]);
@@ -43,6 +45,8 @@ const VideoUpload: React.FC = () => {
     }),
     onSubmit: async (values) => {
       const { link } = values;
+      setLoading(true)
+
       axios
         .post('/api/video/UploadVideo', {
           origionalVideoLink: link,
@@ -53,7 +57,6 @@ const VideoUpload: React.FC = () => {
             
             router.push(`/pricing`);
             return false
-
           }
           
           const { id } = response.data.data;
@@ -74,7 +77,9 @@ const VideoUpload: React.FC = () => {
     });
   }, []);
 
-
+  if(loading){
+    return <Loading />
+  }
 
   return (
     <div>

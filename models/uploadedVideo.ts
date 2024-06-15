@@ -3,12 +3,26 @@ import { prisma } from '@/lib/prisma';
 export const createVideo = async (data: any) => {
   try {
     console.log(data.userId);
+    const existingVideo = await prisma.uploadedVideo.findFirst({
+      where: {
+        originalLink: data.link,
+        userId: data.userId,
+      },
+    });
+  
+    // If the video exists, return it
+    if (existingVideo) {
+      return existingVideo;
+    }
+  
+    // If the video doesn't exist, create a new one
     const newVideo = await prisma.uploadedVideo.create({
       data: {
         originalLink: data.link,
         userId: data.userId,
       },
     });
+  
     return newVideo;
   } catch (error) {
     console.error('Error creating video:', error);

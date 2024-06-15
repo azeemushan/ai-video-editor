@@ -47,7 +47,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   if (!subscription) {
-    return res.status(404).json({ message: 'No active subscription found for this user.' });
+    return  res.json({ status: 'false', message: 'payment required', data: 'payment' });
   }
   const latestSubscriptionUsage:any = await prisma.subscriptionUsage.findFirst({
     where: {
@@ -59,8 +59,8 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   if (
-    latestSubscriptionUsage.upload_count > subscription.subscriptionPackage.upload_video_limit ||
-    latestSubscriptionUsage.clip_count > subscription.subscriptionPackage.generate_clips
+    latestSubscriptionUsage.upload_count >= subscription.subscriptionPackage.upload_video_limit 
+    ||latestSubscriptionUsage.clip_count >= subscription.subscriptionPackage.generate_clips
   ) {
   return  res.json({ status: 'false', message: 'payment required', data: 'payment' });
   }
