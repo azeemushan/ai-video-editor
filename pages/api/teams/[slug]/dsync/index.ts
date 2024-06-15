@@ -70,7 +70,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   sendAudit({
     action: 'dsync.connection.create',
     crud: 'c',
-    user: teamMember.user,
+    user: teamMember.user as any,
     team: teamMember.team,
   });
 
