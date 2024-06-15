@@ -103,19 +103,55 @@ if(src_url){
 
 // Handle PUT request to update the conVideoId field
 const handlePUT = async (req: NextApiRequest, res: NextApiResponse) => {
-  const {  conVideoId,videoId ,conVideoSrc} = req.body;
-  console.log(`=============================================src`)
-  console.log(conVideoSrc)
-
+  const {  conVideoId,videoId } = req.body;
   const session = await getSession(req, res);
-// put request to update conVideoSrc
-
-
-
-// put request to update conVideoId
-
   try {
     const updatedVideo = await updateConVideoIdField({ id:videoId,userId:session?.user.id, conVideoId });
+    if(updatedVideo){
+      const latestActiveSubscription = await prisma.subscriptions.findFirst({
+        where: {
+          user_id: session?.user.id,
+          status: true,
+        },
+        orderBy: {
+          createdAt: 'desc', // Sort by start_date in descending order to get the latest subscription
+        },
+      });
+      
+      if (latestActiveSubscription) {
+        const subscriptionId = latestActiveSubscription.id;
+      
+        // Step 2: Retrieve the latest SubscriptionUsage record for that subscription
+        const latestSubscriptionUsage = await prisma.subscriptionUsage.findFirst({
+          where: {
+            subscriptions_id: subscriptionId,
+          },
+          orderBy: {
+            createdAt: 'desc', // Sort by createdAt in descending order to get the latest usage record
+          },
+        });
+      
+        if (latestSubscriptionUsage) {
+          // Step 3: Update the upload_count of that record by incrementing it by one
+          const updatedSubscriptionUsage = await prisma.subscriptionUsage.update({
+            where: {
+              id: latestSubscriptionUsage.id,
+            },
+            data: {
+              upload_count: latestSubscriptionUsage.upload_count + 1,
+            },
+          });
+      
+          console.log(updatedSubscriptionUsage);
+        } else {
+          console.log("No SubscriptionUsage record found for the latest active subscription.");
+        }
+      } else {
+        console.log("No active subscription found for the user.");
+      }
+
+
+    }
     res.status(200).json({ status: 'true', message: 'Video updated', data: updatedVideo });
   } catch (error) {
     res.json({ status: 'false', message: 'convideoField not updated', data: {} });

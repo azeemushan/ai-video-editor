@@ -7,9 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import env from '@/lib/env';
 import FrontLayout from '@/components/layouts/FrontLayout';
 import { useTranslation } from 'next-i18next';
-
 // import { useTranslation } from 'next-i18next';
-
 const pricingPlans = {
   monthly: [
     {
@@ -110,6 +108,7 @@ const Pricing: NextPageWithLayout = () => {
   const { t } = useTranslation('common');
 
 
+
   return (
 
     <FrontLayout>
@@ -196,7 +195,6 @@ const Pricing: NextPageWithLayout = () => {
     </FrontLayout>
   );
 };
-
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   // Redirect to login page if landing page is disabled
   if (env.hideLandingPage) {
@@ -207,9 +205,6 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       },
     };
   }
-
-  
-
   const { locale } = context;
 
   return {
@@ -218,9 +213,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     },
   };
 };
-
 Pricing.getLayout = function getLayout(page: ReactElement) {
   return <>{page}</>;
 };
-
 export default Pricing;
