@@ -22,10 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 const handleGET = async (req: NextApiRequest, res: NextApiResponse) => {
-  
-
-  
-
   try {
     const subscriptionPackages = await getSubscriptionPackage();
     res.status(200).json({ status: 'true', message: 'get all subscriptionPackages', data: subscriptionPackages });

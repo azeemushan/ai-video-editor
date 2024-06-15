@@ -213,7 +213,7 @@ const FetchingVideo: NextPageWithLayout = ({
 
 
     }
-  }, [exportClips, clips, allProcessed, id]);
+  }, [exportClips, clips, allProcessed, id, router]);
 
   useEffect(() => {
     if (isAllDataStored) {

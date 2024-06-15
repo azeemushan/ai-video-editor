@@ -326,5 +326,10 @@
   "Editur":"Editur.ai",
   "open_main":"Open main menu",
   "sub-pkg":"Subscription Packages",
-  "no-hidden-fee":"No hidden fees. Cancel anytime."
+  "no-hidden-fee":"No hidden fees. Cancel anytime.",
+  "pay-success":"Payment Successful!",
+  "pay-complete":"Thank you for your payment. Your transaction has been completed.",
+  "pay-fail": "Payment Failed!",
+  "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again."
+  
 }

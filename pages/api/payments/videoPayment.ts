@@ -1,8 +1,9 @@
+import env from '@/lib/env';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
-const stripe = new Stripe(
-  'sk_test_51PQTZD2MXTg6eduPg7y3VWnmQbzLR23BSx6TRde6TYNteFnmrQwThtRndCzYYccbj824pifkK1sh0eZiUpAFVnMp00FLzxjKOc'
-);
+
+
+const stripe = new Stripe(`${env.stripe.secretKey}`);
 
 export default async function handler(
   req: NextApiRequest,
@@ -32,7 +33,6 @@ export default async function handler(
 // Handle POST request to create a video
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   const { price, Subscription_type } = req.body;
-
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -43,7 +43,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
             product_data: {
               name: Subscription_type,
             },
-            unit_amount: +price * 100,
+            unit_amount: ((+price) * 100),
           },
 
           quantity: 1,
@@ -51,18 +51,19 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
       ],
       mode: 'payment',
 
-      success_url: `/payment/success`,
-      cancel_url: `/payment/cancel`,
+      success_url: `${process.env.APP_URL}/payments/paymentSuccess`,
+      cancel_url: `${process.env.APP_URL}/payments/paymentFail`,
     });
 
     res
       .status(200)
       .json({
         status: 'true',
-        message: 'video clip created',
+        message: 'redirect to payment',
         data: { url: session.url },
       });
   } catch (err) {
+    console.log(err)
     res.json({ status: 'false', message: 'payment not done', data: {} });
   }
 };

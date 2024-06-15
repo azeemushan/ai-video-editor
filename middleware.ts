@@ -21,7 +21,11 @@ const unAuthenticatedRoutes = [
   '/unlock-account',
   '/login/saml',
   '/.well-known/*',
-  '/pricing'
+  '/payments/paymentSuccess',
+  '/pricing',
+  '/api/subscriptionPackages/subPkg',
+  '/api/payments/videoPayment'
+  
 ];
 
 export default async function middleware(req: NextRequest) {
