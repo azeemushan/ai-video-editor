@@ -161,7 +161,6 @@ const Pricing: NextPageWithLayout = () => {
       price:numericPrice,
       Subscription_type:subscriptionType
     }).then((res)=>{
-      
       router.push(res.data.data.url)
     })
 

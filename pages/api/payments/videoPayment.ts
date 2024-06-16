@@ -1,6 +1,7 @@
 import env from '@/lib/env';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
+import { getSession } from '@/lib/session';
 
 
 const stripe = new Stripe(`${env.stripe.secretKey}`);
@@ -32,6 +33,19 @@ export default async function handler(
 
 // Handle POST request to create a video
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
+  const session = await getSession(req, res);
+  
+  if(!session?.user){
+    res
+      .json({
+        status: 'true',
+        message: 'redirect to payment',
+        data: { url: `${env.appUrl}/auth/login?callbackUrl=${encodeURIComponent(env.appUrl + '/pricing')}` },
+      });
+
+  }
+
+  
   const { price, Subscription_type } = req.body;
   try {
     const session = await stripe.checkout.sessions.create({

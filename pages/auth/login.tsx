@@ -44,11 +44,13 @@ const Login: NextPageWithLayout<
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
-  const { error, success, token } = router.query as {
+  const { error, success, token, callbackUrl } = router.query as {
     error: string;
     success: string;
     token: string;
+    callbackUrl: string;
   };
+
 
   const handlePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
@@ -66,9 +68,10 @@ const Login: NextPageWithLayout<
 
   
 
-    const redirectUrl = token 
-  ? `/invitations/${token}`
-  : (data?.user.user_type === "USER" ? env.redirectIfAuthenticated : '/admin/dashboard');
+  const redirectUrl = callbackUrl || (token
+    ? `/invitations/${token}`
+    : (data?.user.user_type === "USER" ? env.redirectIfAuthenticated : '/admin/dashboard'));
+
 
   const formik = useFormik({
     initialValues: {
