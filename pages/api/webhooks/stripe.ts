@@ -2,6 +2,8 @@ import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import env from '@/lib/env';
+import { prisma } from '@/lib/prisma';
+
 import type { Readable } from 'node:stream';
 import {
   createStripeSubscription,
@@ -30,6 +32,7 @@ const relevantEvents: Stripe.Event.Type[] = [
   'customer.subscription.created',
   'customer.subscription.updated',
   'customer.subscription.deleted',
+  'checkout.session.completed', // Added the checkout session completed event
 ];
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
@@ -44,6 +47,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
       return;
     }
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+    console.log('Event received from Stripe:', event);
   } catch (err: any) {
     return res.status(400).json({ error: { message: err.message } });
   }
@@ -62,13 +66,16 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
             (event.data.object as Stripe.Subscription).id
           );
           break;
+        case 'checkout.session.completed':
+          await handleCheckoutSessionCompleted(event);
+          break;
         default:
           throw new Error('Unhandled relevant event!');
       }
     } catch (error) {
       return res.status(400).json({
         error: {
-          message: 'Webhook handler failed. View your nextjs function logs.',
+          message: 'Webhook handler failed. View your Next.js function logs.',
         },
       });
     }
@@ -119,10 +126,59 @@ async function handleSubscriptionCreated(event: Stripe.Event) {
   await createStripeSubscription({
     customerId: customer as string,
     id,
-
     active: true,
     startDate: new Date(current_period_start * 1000),
     endDate: new Date(current_period_end * 1000),
     priceId: items.data.length > 0 ? items.data[0].plan?.id : '',
   });
+}
+function formatDate(date: Date): string {
+  return date.toISOString();
+}
+
+
+async function handleCheckoutSessionCompleted(event: Stripe.Event) {
+  const session = event.data.object as Stripe.Checkout.Session;
+  console.log('Checkout session completed:', session);
+
+  const subPackageId = session.metadata?.sub_package_id;
+  const userId = session.metadata?.userId;
+
+  if (subPackageId && userId) {
+    await prisma.subscriptions.updateMany({
+      where: { user_id: userId },
+      data: { status: false },
+    });
+
+    const startDate = new Date(session.created * 1000); 
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+
+    try {
+      const newSubscription = await prisma.subscriptions.create({
+        data: {
+          subscription_pkg_id: +subPackageId,
+          user_id: userId,
+          start_date: formattedStartDate,
+          end_date: formattedEndDate,
+          status: true,
+        },
+      });
+
+      await prisma.subscriptionUsage.create({
+        data: {
+          subscriptions_id: newSubscription.id,
+          upload_count: 0,
+          clip_count: 0,
+          min: 0,
+        },
+      });
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }

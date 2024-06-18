@@ -8,10 +8,12 @@ import FrontLayout from '@/components/layouts/FrontLayout';
 import { useTranslation } from 'next-i18next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import {  Loading } from '@/components/shared';
 
 const pricingPlans = {
   monthly: [
     {
+      id:'1',
       name: 'Basic',
       price: '$29',
       period: '/month',
@@ -25,7 +27,7 @@ const pricingPlans = {
       buttonClass: 'border border-slate-200 text-slate-950 bg-white',
       buttonText: 'Get Started',
     },
-    {
+    { id:2,
       name: 'Pro',
       price: '$79',
       period: '/month',
@@ -41,6 +43,7 @@ const pricingPlans = {
       buttonText: 'Get Started',
     },
     {
+      id:3,
       name: 'Pro+',
       price: '$189',
       period: '/month',
@@ -109,6 +112,7 @@ const Pricing: NextPageWithLayout = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
   const [subPkges, setSubPkges] = useState<any>([]);
   const { t } = useTranslation('common');
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,6 +143,7 @@ const Pricing: NextPageWithLayout = () => {
         const newPlan = subPkges[index];
         return {
           ...plan,
+          id:newPlan.id,
           name: newPlan.subscription_type,
           price: `$${newPlan.price}`,
           features: [
@@ -155,9 +160,12 @@ const Pricing: NextPageWithLayout = () => {
     }
   }, [subPkges]);
 
-  const handleGetStarted = (price:any, subscriptionType:any) => {
+  const handleGetStarted = (id:any,price:any, subscriptionType:any) => {
+    setLoading(true)
+    
     const numericPrice = price.replace('$', '');
     axios.post('/api/payments/videoPayment',{
+      id:id,
       price:numericPrice,
       Subscription_type:subscriptionType
     }).then((res)=>{
@@ -166,6 +174,9 @@ const Pricing: NextPageWithLayout = () => {
 
     
   };
+  if(loading){
+    return <Loading />
+  }
 
   return (
     <FrontLayout>
@@ -186,7 +197,7 @@ const Pricing: NextPageWithLayout = () => {
             </button>
             <button
               onClick={() => setPlanType('yearly')}
-              className={`px-6 py-3 h-12 rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+              className={`px-6 py-3 h-12 hidden rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
             >
               <span className="text-sm font-semibold">{t('Yearly')}</span>
               <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
@@ -210,7 +221,7 @@ const Pricing: NextPageWithLayout = () => {
                   </h3>
                   <button
                     className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
-                    onClick={() => handleGetStarted(plan.price, plan.name)}
+                    onClick={() => handleGetStarted(plan.id,plan.price, plan.name)}
                   >
                     <span className="text-sm font-semibold whitespace-nowrap">
                       {plan.buttonText}

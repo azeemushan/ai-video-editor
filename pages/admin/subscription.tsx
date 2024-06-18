@@ -1,77 +1,70 @@
-
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { NextPageWithLayout } from 'types';
 import { Table } from '@/components/shared/table/Table';
-
 import { MdDelete } from "react-icons/md";
 import { useTranslation } from 'next-i18next';
 import Badge from '@/components/shared/Badge';
-
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 const Subscription: NextPageWithLayout = () => {
-    const { t } = useTranslation('common');
+  const { t } = useTranslation('common');
+  const [tableData, setTableData] = useState([]);
 
-  const columns = ['User Name', 'Package', 'start Date', 'End Date','Status','Actions'];
-  
-  const tableData = [
-    {
-      id: '1',
-      cells: [
-        { text: 'Malik' },
-        { text: 'Basic' },
-        { text: '6/14/2024' },
-        { text: '7/14/2024' },
-        { text:   <Badge color="info">{t('active')}</Badge> }, //if true show active else finish
-        { 
-          actions: [
-            
-            {
-              text: 'Delete',
-              icon: <MdDelete />,
-              onClick: () => alert('Delete clicked'),
-              destructive: true,
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get('/api/subscriptions/subscription');
+        const data = res.data.data.map((item: any) => ({
+          id: item.id.toString(),
+          cells: [
+            { text: item.user.name },
+            { text: item.subscriptionPackage.subscription_type },
+            { text: dayjs(item.start_date).format('M/D/YYYY') },
+            { text: dayjs(item.end_date).format('M/D/YYYY') },
+            { text: item.status ? <Badge color="info">{t('active')}</Badge> : <Badge color="error">{t('Finished')}</Badge> },
+            { 
+              actions: [
+                {
+                  text: 'Delete',
+                  icon: <MdDelete />,
+                  onClick: () => handleDelete(item.id),
+                  destructive: true,
+                },
+              ],
             },
           ],
-        },
-      ],
-    },
-    {
-      id: '2',
-      cells: [
-        { text: 'Uzair' },
-        { text: 'Pro' },
-        { text: '6/14/2024' },
-        { text: '7/14/2024' },
-        { text: <Badge color="error">{t('Finished')}</Badge> },  // if true show active else finish
-        { 
-          actions: [
-            
-            {
-              text: 'Delete',
-              icon: <MdDelete />,
-              onClick: () => alert('Delete clicked'),
-              destructive: true,
-            },
-          ],
-        },
-      ],
-    },
-  ];
+        }));
+        setTableData(data);
+      } catch (error) {
+        console.error('Error fetching subscription :', error);
+      }
+    };
+    fetchData();
+  }, [t]);
 
-  return <>
-  
-   <div>
+  const handleDelete = (id: number) => {
+    alert(`Delete clicked for subscription ID: ${id}`);
+    // Add the axios delete request here if needed
+    // axios.delete(`/api/subscriptions/${id}`)
+    //   .then(response => {
+    //     // Handle successful deletion
+    //   })
+    //   .catch(error => {
+    //     console.error('Error deleting subscription:', error);
+    //   });
+  };
+
+  const columns = ['User Name', 'Package', 'Start Date', 'End Date', 'Status', 'Actions'];
+
+  return (
+    <div>
       <h1 className='mb-3 font-bold'>{t('subscriptions')}</h1>
       <Table cols={columns} body={tableData as any} noMoreResults={false} />
     </div>
-
-  </>
-  
-
-  
-
-
+  );
 };
 
 export async function getStaticProps({ locale }: GetServerSidePropsContext) {

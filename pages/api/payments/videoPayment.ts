@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import { getSession } from '@/lib/session';
 
-
 const stripe = new Stripe(`${env.stripe.secretKey}`);
 
 export default async function handler(
@@ -34,50 +33,55 @@ export default async function handler(
 // Handle POST request to create a video
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession(req, res);
-  
-  if(!session?.user){
-    res
-      .json({
-        status: 'true',
-        message: 'redirect to payment',
-        data: { url: `${env.appUrl}/auth/login?callbackUrl=${encodeURIComponent(env.appUrl + '/pricing')}` },
-      });
 
+  if (!session?.user) {
+    res.json({
+      status: 'true',
+      message: 'redirect to payment',
+      data: {
+        url: `${env.appUrl}/auth/login?callbackUrl=${encodeURIComponent(env.appUrl + '/pricing')}`,
+      },
+    });
+    return; // Ensure to return here to stop further execution
   }
 
-  
-  const { price, Subscription_type } = req.body;
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: Subscription_type,
-            },
-            unit_amount: ((+price) * 100),
-          },
-
-          quantity: 1,
+  const { id, price, Subscription_type } = req.body;
+  if (price) {
+    try {
+      const checkoutSession = await stripe.checkout.sessions.create({
+        metadata:{
+          sub_package_id:id,
+          userId:session?.user.id
         },
-      ],
-      mode: 'payment',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: Subscription_type,
+                
+              },
+              unit_amount: +price * 100,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${env.appUrl}/payments/paymentSuccess`,
+        cancel_url: `${env.appUrl}/payments/paymentFail`,
+      });
 
-      success_url: `${process.env.APP_URL}/payments/paymentSuccess`,
-      cancel_url: `${process.env.APP_URL}/payments/paymentFail`,
-    });
-
-    res
-      .status(200)
-      .json({
+      res.status(200).json({
         status: 'true',
         message: 'redirect to payment',
-        data: { url: session.url },
+        data: { url: checkoutSession.url },
       });
-  } catch (err) {
-    console.log(err)
-    res.json({ status: 'false', message: 'payment not done', data: {} });
+    } catch (err) {
+      console.log(err);
+      res.json({ status: 'false', message: 'payment not done', data: {} });
+    }
+  } else {
+    res.status(400).json({ status: 'false', message: 'Price not provided', data: {} });
   }
 };
