@@ -47,48 +47,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
         <meta property="og:url" content="" />
         <meta property="og:locale" content="en" />
       </Head>
-      <style jsx>{`
-        .max-w-7xl {
-          max-width: 100rem;
-        }
-        .sm-video-width {
-          width: 40%;
-        }
-        .sm-padding-top {
-          padding-top: 14rem;
-        }
-        .sm-font-size {
-          font-size: 4rem;
-        }
-        @media screen and (max-width: 1020px) {
-          .small-display {
-            flex-direction: column;
-            align-items: center;
-          }
-          .small-center {
-            text-align: center;
-          }
-          .sm-video-width {
-            width: 65%;
-            display: flex;
-            justify-content: center;
-            margin: auto;
-            padding: 10px;
-          }
-          .video-sm-width {
-            width: 70%;
-          }
-          .video-hight {
-            height: 100%;
-          }
-          .sm-padding-top {
-            padding-top: 2rem;
-          }
-          .sm-font-size {
-            font-size: 3rem;
-          }
-        }
-      `}</style>
+
       <header className="fixed inset-x-0 top-0 z-50 bg-white/10 backdrop-blur-sm">
         <nav className="navbar flex h-16 items-center justify-between px-6 py-3 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
