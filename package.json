@@ -25,7 +25,8 @@
     "sync-stripe": "node --env-file .env sync-stripe.js",
     "check-locale": "node check-locale.js",
     "delete-team": "node --env-file .env delete-team.js",
-    "seed": "ts-node ./prisma/seed.ts"
+    "seed": "ts-node ./prisma/seed.ts",
+    "postinstall": "npm run seed"
   },
   "dependencies": {
     "@boxyhq/metrics": "0.2.7",

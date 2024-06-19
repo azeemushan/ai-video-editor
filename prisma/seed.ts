@@ -4,49 +4,37 @@ const client = new PrismaClient();
 const { hash } = require('bcryptjs');
 const { randomUUID } = require('crypto');
 const { addMonths } = require('date-fns');
-let USER_COUNT = 10;
-const TEAM_COUNT = 5;
-const ADMIN_EMAIL = 'admin@example.com';
-const ADMIN_PASSWORD = 'admin@123';
-const USER_EMAIL = 'user@example.com';
-const USER_PASSWORD = 'user@123';
-const PRICE_MULTIPLIER = 15;
+
+const ADMIN_EMAIL = 'admin@gmail.com';
+const ADMIN_PASSWORD = '123456789';
+const ADMIN_NAME = 'admin';
 
 async function seedUsers() {
   const newUsers: any[] = [];
-  await createRandomUser(ADMIN_EMAIL, ADMIN_PASSWORD);
-  await createRandomUser(USER_EMAIL, USER_PASSWORD);
-  await Promise.all(
-    Array(USER_COUNT)
-      .fill(0)
-      .map(() => createRandomUser())
-  );
+  await createAdminUser();
 
   console.log('Seeded users', newUsers.length);
 
   return newUsers;
 
-  async function createRandomUser(
-    email: string | undefined = undefined,
-    password: string | undefined = undefined
-  ) {
+  async function createAdminUser() {
+    const email = ADMIN_EMAIL;
     try {
-      const originalPassword = password || faker.internet.password();
-      email = email || faker.internet.email();
-      password = await hash(originalPassword, 12);
+      const originalPassword = ADMIN_PASSWORD;
+      const password = await hash(originalPassword, 12);
       const user = await client.user.create({
         data: {
           email,
-          name: faker.person.firstName(),
+          name: ADMIN_NAME,
           password,
           emailVerified: new Date(),
+          user_type: 'ADMIN',
         },
       });
       newUsers.push({
         ...user,
         password: originalPassword,
       });
-      USER_COUNT--;
     } catch (ex: any) {
       if (ex.message.indexOf('Unique constraint failed') > -1) {
         console.error('Duplicate email', email);
@@ -61,7 +49,7 @@ async function seedTeams() {
   const newTeams: any[] = [];
 
   await Promise.all(
-    Array(TEAM_COUNT)
+    Array(5)
       .fill(0)
       .map(() => createRandomTeam())
   );
@@ -91,22 +79,17 @@ async function seedTeamMembers(users: any[], teams: any[]) {
   const newTeamMembers: any[] = [];
   const roles = ['OWNER', 'MEMBER'];
   for (const user of users) {
-    const count = Math.floor(Math.random() * (TEAM_COUNT - 1)) + 2;
+    const count = Math.floor(Math.random() * 4) + 2;
     const teamUsed = new Set();
     for (let j = 0; j < count; j++) {
       try {
         let teamId;
         do {
-          teamId = teams[Math.floor(Math.random() * TEAM_COUNT)].id;
+          teamId = teams[Math.floor(Math.random() * teams.length)].id;
         } while (teamUsed.has(teamId));
         teamUsed.add(teamId);
         newTeamMembers.push({
-          role:
-            user.email === ADMIN_EMAIL
-              ? 'OWNER'
-              : user.email === USER_EMAIL
-                ? 'MEMBER'
-                : roles[Math.floor(Math.random() * 2)],
+          role: user.email === ADMIN_EMAIL ? 'OWNER' : roles[Math.floor(Math.random() * roles.length)],
           teamId,
           userId: user.id,
         });
@@ -151,6 +134,7 @@ async function seedInvitations(teams: any[], users: any[]) {
 
   return newInvitations;
 }
+
 async function seedSubscriptionPackages() {
   const packages = [
     {
@@ -158,38 +142,35 @@ async function seedSubscriptionPackages() {
       upload_video_limit: 10,
       generate_clips: 100,
       max_length_video: '00:45:00',
-      total_min: 29 * PRICE_MULTIPLIER,
-      subscription_type:'BASIC'
+      total_min: 29 * 15,
+      subscription_type: 'BASIC'
     },
     {
       price: 79,
       upload_video_limit: 30,
       generate_clips: 300,
       max_length_video: '02:00:00',
-      total_min: 79 * PRICE_MULTIPLIER,
-      subscription_type:'PRO'
+      total_min: 79 * 15,
+      subscription_type: 'PRO'
     },
     {
       price: 189,
       upload_video_limit: 100,
       generate_clips: 1000,
       max_length_video: '03:00:00',
-      total_min: 189 * PRICE_MULTIPLIER,
-      subscription_type:'PREMIUM'
+      total_min: 189 * 15,
+      subscription_type: 'PREMIUM'
     },
-    // Add other packages if needed
   ];
 
   for (const pkg of packages) {
     const existingPackage = await client.subscriptionPackage.findFirst({
       where: {
-
-          price: pkg.price,
-          upload_video_limit: pkg.upload_video_limit,
-          generate_clips: pkg.generate_clips,
-          max_length_video: pkg.max_length_video,
-          subscription_type: pkg.subscription_type,
-
+        price: pkg.price,
+        upload_video_limit: pkg.upload_video_limit,
+        generate_clips: pkg.generate_clips,
+        max_length_video: pkg.max_length_video,
+        subscription_type: pkg.subscription_type,
       },
     });
 
@@ -209,7 +190,6 @@ async function seedSingleSubscription() {
   const firstPackage = await client.subscriptionPackage.findFirst();
 
   if (firstUser && firstPackage) {
-    // Check if a subscription already exists for the first user and the first package
     const existingSubscription = await client.subscriptions.findFirst({
       where: {
         user_id: firstUser.id,
@@ -238,15 +218,14 @@ async function seedSingleSubscription() {
   }
 }
 
-
 async function init() {
-  // const users = await seedUsers();
+  await seedUsers();
+  // const users = await client.user.findMany();
   // const teams = await seedTeams();
   // await seedTeamMembers(users, teams);
   // await seedInvitations(teams, users);
   await seedSubscriptionPackages();
-  await seedSingleSubscription(); 
+  await seedSingleSubscription();
 }
 
 init();
-
