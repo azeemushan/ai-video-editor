@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import Image from 'next/image';
 import Ed from '@/public/Ed.png'
+import { useSession } from 'next-auth/react';
 
 
 
@@ -14,6 +15,7 @@ interface FrontLayoutProps {
 
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
+    const {status} = useSession()
     
 
     
