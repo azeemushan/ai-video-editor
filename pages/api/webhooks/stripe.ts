@@ -145,10 +145,17 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   const userId = session.metadata?.userId;
 
   if (subPackageId && userId) {
+    const subscriptions = await prisma.subscriptions.findMany({
+      where: {
+        user_id: userId,
+      },
+    });
+    if (subscriptions.length > 0) {
     await prisma.subscriptions.updateMany({
       where: { user_id: userId },
       data: { status: false },
     });
+  }
 
     const startDate = new Date(session.created * 1000); 
     const endDate = new Date(startDate);

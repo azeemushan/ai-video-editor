@@ -227,5 +227,4 @@ async function init() {
   await seedSubscriptionPackages();
   await seedSingleSubscription();
 }
-
 init();
