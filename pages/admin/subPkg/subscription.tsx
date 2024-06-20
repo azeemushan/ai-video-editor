@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import type { NextPageWithLayout } from 'types';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -7,242 +7,164 @@ import { useTranslation } from 'next-i18next';
 import axios from 'axios';
 import Link from 'next/link';
 
-const pricingPlans = {
-  monthly: [
-    {
-      id: '1',
-      name: 'Basic',
-      price: '$29',
-      period: '/month',
-      features: [
-        'Upload 10 videos monthly',
-        'Up to 45 minutes long videos',
-        'Generate 100 clips monthly',
-        'HD download',
-      ],
-      cardClass: 'bg-[rgb(248,236,236)] text-slate-950',
-      buttonClass: 'border border-slate-200 text-slate-950 bg-white',
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    },
-    {
-      id: '2',
-      name: 'Pro',
-      price: '$79',
-      period: '/month',
-      features: [
-        'Upload 30 videos monthly',
-        'Up to 2 hours long videos',
-        'Generate 300 clips monthly',
-        '4K download',
-        'Translate to 29 languages (AI Dubbing)',
-      ],
-      cardClass: 'bg-slate-950 text-white',
-      buttonClass: 'bg-white text-slate-950 border-white',
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    },
-    {
-      id: '3',
-      name: 'Pro+',
-      price: '$189',
-      period: '/month',
-      features: [
-        'Upload 100 videos monthly',
-        'Up to 3 hours long videos',
-        'Generate 1000 clips monthly',
-        '4K download',
-        'Translate to 29 languages (AI Dubbing)',
-      ],
-      cardClass: 'bg-slate-200 text-slate-950',
-      buttonClass: 'border border-slate-200 text-white bg-slate-950',
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    },
-  ],
-  yearly: [
-    {
-      name: 'Basic',
-      price: '$23',
-      period: '/month',
-      features: [
-        'Upload 10 videos monthly',
-        'Up to 45 minutes long videos',
-        'Generate 100 clips monthly',
-        'HD download',
-      ],
-      cardClass: 'bg-[rgb(248,236,236)] text-slate-950',
-      buttonClass: 'border border-slate-200 text-slate-950 bg-white',
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    },
-    {
-      name: 'Pro',
-      price: '$63',
-      period: '/month',
-      features: [
-        'Upload 30 videos monthly',
-        'Up to 2 hours long videos',
-        'Generate 300 clips monthly',
-        '4K download',
-        'Translate to 29 languages (AI Dubbing)',
-      ],
-      cardClass: 'bg-slate-950 text-white',
-      buttonClass: 'bg-white text-slate-950 border-white',
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    },
-    {
-      name: 'Pro+',
-      price: '$151',
-      period: '/month',
-      features: [
-        'Upload 100 videos monthly',
-        'Up to 3 hours long videos',
-        'Generate 1000 clips monthly',
-        '4K download',
-        'Translate to 29 languages (AI Dubbing)',
-      ],
-      cardClass: 'bg-slate-200 text-slate-950',
-      buttonClass: 'border border-slate-200 text-white bg-slate-950',
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    },
-  ],
-};
-
 const Pricing: NextPageWithLayout = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
-  const [subPkges, setSubPkges] = useState<any>([]);
+  const [pricingPlans, setPricingPlans] = useState<any[]>([]); // Initialize as empty array
   const { t } = useTranslation('common');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get('/api/subscriptionPackages/subPkg');
-        setSubPkges(res.data.data);
+        const { data } = res.data;
+
+        // Sort plans by subscription_type: basic, pro, premium
+        data.sort((a: any, b: any) => {
+          if (a.subscription_type === 'BASIC') return -1;
+          if (a.subscription_type === 'PRO' && b.subscription_type !== 'BASIC') return -1;
+          return 1;
+        });
+
+        const updatedPlans = {
+          monthly: updatePricingPlans(data, 'monthly'),
+          yearly: updatePricingPlans(data, 'yearly'),
+        };
+
+        setPricingPlans(updatedPlans as any);
       } catch (error) {
         console.error('Error fetching subscription packages:', error);
       }
     };
+
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (subPkges.length) {
-      const convertMaxLengthVideo = (maxLength) => {
-        const [hours, minutes, seconds] = maxLength.split(':').map(Number);
-        if (hours > 0) {
-          return `Up to ${hours} hours long videos`;
-        } else if (minutes > 0) {
-          return `Up to ${minutes} minutes long videos`;
-        } else {
-          return `Up to ${seconds} seconds long videos`;
-        }
-      };
+  const updatePricingPlans = (data: any[], period: 'monthly' | 'yearly') => {
+    return data.map((newPlan) => ({
+      id: newPlan.id,
+      name: newPlan.subscription_type,
+      price: `$${newPlan.price}`,
+      features: [
+        `Upload ${newPlan.upload_video_limit} videos monthly`,
+        convertMaxLengthVideo(newPlan.max_length_video),
+        `Generate ${newPlan.generate_clips} clips monthly`,
+        period === 'monthly' ? 'HD download' : '4K download',
+        period !== 'monthly' && newPlan.subscription_type !== 'BASIC'
+          ? 'Translate to 29 languages (AI Dubbing)'
+          : undefined,
+      ].filter(Boolean),
+      cardClass: getCardClass(newPlan.subscription_type, period),
+      buttonClass: getButtonClass(newPlan.subscription_type, period),
+      buttonText: 'Get Started',
+      editButton: 'Edit',
+    }));
+  };
+  
 
-      const updatedMonthly = pricingPlans.monthly.map((plan, index) => {
-        const newPlan = subPkges[index];
-        return {
-          ...plan,
-          id: newPlan.id,
-          name: newPlan.subscription_type,
-          price: `$${newPlan.price}`,
-          features: [
-            `Upload ${newPlan.upload_video_limit} videos monthly`,
-            convertMaxLengthVideo(newPlan.max_length_video),
-            `Generate ${newPlan.generate_clips} clips monthly`,
-            plan.features.includes('HD download') ? 'HD download' : '4K download',
-            (plan.features.includes('Translate to 29 languages (AI Dubbing)') && newPlan.subscription_type !== 'BASIC') ? 'Translate to 29 languages (AI Dubbing)' : undefined,
-          ].filter(Boolean),
-        };
-      });
-
-      pricingPlans.monthly = updatedMonthly as any;
+  const getCardClass = (subscriptionType: string, period: 'monthly' | 'yearly') => {
+    if (subscriptionType === 'PRO') {
+      return 'bg-black text-white';
+    } else {
+      return period === 'monthly' ? 'bg-[rgb(248,236,236)] text-slate-950' : 'bg-slate-950 text-white';
     }
-  }, [subPkges]);
+  };
+
+  const getButtonClass = (subscriptionType: string, period: 'monthly' | 'yearly') => {
+    if (subscriptionType === 'PRO') {
+      return 'bg-white text-slate-950 border-white';
+    } else {
+      return period === 'monthly' ? 'border border-slate-200 text-slate-950 bg-white' : 'bg-white text-slate-950 border-white';
+    }
+  };
+
+  const convertMaxLengthVideo = (maxLength: string) => {
+    const [hours, minutes, seconds] = maxLength.split(':').map(Number);
+
+    if (hours > 0) {
+      return `Up to ${hours} hours long videos`;
+    } else if (minutes > 0) {
+      return `Up to ${minutes} minutes long videos`;
+    } else {
+      return `Up to ${seconds} seconds long videos`;
+    }
+  };
 
   return (
-    
-      <div className="max-w-5xl mx-auto px-3 text-center text-slate-950">
-        <h1 className="text-4xl md:text-5xl font-semibold font-display my-8">
-          {t('Plans')}
-        </h1>
-        <p className="text-xl font-sans font-normal text-slate-600 my-8">
-          {t('no-hidden-fee')}
-        </p>
-        <div className="max-w-5xl mx-auto px-3 text-center">
-          <div className="mx-auto mb-8 inline-flex gap-2 items-center justify-center bg-slate-200 p-1 rounded-2xl">
-            <button
-              onClick={() => setPlanType('monthly')}
-              className={`px-6 py-3 h-12 rounded-xl ${planType === 'monthly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
-            >
-              <span className="text-sm font-semibold">{t('Monthly')}</span>
-            </button>
-            <button
-              onClick={() => setPlanType('yearly')}
-              className={`px-6 py-3 h-12 hidden rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
-            >
-              <span className="text-sm font-semibold">{t('Yearly')}</span>
-              <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
-                {t('save-190')}
-              </span>
-            </button>
-          </div>
-          <div className="flex flex-col md:flex-row gap-8 justify-center">
-            {pricingPlans[planType].map((plan) => (
-              <section key={plan.name} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
-                <div className="flex-col flex justify-center items-center text-center">
-                  <h2 className="text-2xl font-semibold mb-4">{plan.name}</h2>
-                  <div className="flex-1 flex justify-center">
-                    <div className="h-auto flex gap-2 items-center">
-                      <div className="w-20 h-auto shrink-0"></div>
-                    </div>
-                  </div>
-                  <h3 className="text-4xl md:text-5xl font-semibold mt-8 flex items-baseline">
-                    <span>{plan.price}</span>
-                    <p className="text-lg font-sans font-normal">{plan.period}</p>
-                  </h3>
-                  <ul className="flex-1 self-start flex flex-col mt-8 gap-4 w-full">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex gap-2 items-center text-left">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                          className="w-5 h-5 shrink-0"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          ></path>
-                        </svg>
-                        <p className="text-sm font-normal">{feature}</p>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={`/admin/subPkg/editSubscription/${plan.id}`}
-                    className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
-                  >
-                    <span className="text-sm font-semibold whitespace-nowrap">
-                      {plan.editButton}
-                    </span>
-                  </Link>
-                </div>
-              </section>
-            ))}
-          </div>
-          <p className="text-sm font-normal mt-8 text-slate-700">
-            {t('need-more')} <a className="text-slate-500" href="https://discord.gg/KcAcHdrSQU">{t('lets-talk')}</a>
-          </p>
+    <div className="max-w-5xl mx-auto px-3 text-center text-slate-950">
+      <h1 className="text-4xl md:text-5xl font-semibold font-display my-8">{t('Plans')}</h1>
+      <p className="text-xl font-sans font-normal text-slate-600 my-8">{t('no-hidden-fee')}</p>
+      <div className="max-w-5xl mx-auto px-3 text-center">
+        <div className="mx-auto mb-8 inline-flex gap-2 items-center justify-center bg-slate-200 p-1 rounded-2xl">
+          <button
+            onClick={() => setPlanType('monthly')}
+            className={`px-6 py-3 h-12 rounded-xl ${planType === 'monthly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+          >
+            <span className="text-sm font-semibold">{t('Monthly')}</span>
+          </button>
+          <button
+            onClick={() => setPlanType('yearly')}
+            className={`px-6 py-3 h-12 hidden rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+          >
+            <span className="text-sm font-semibold">{t('Yearly')}</span>
+            <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
+              {t('save-190')}
+            </span>
+          </button>
         </div>
+        <div className="flex flex-col md:flex-row gap-8 justify-center">
+          {pricingPlans[planType]?.map((plan: any) => (
+            <section key={plan.name} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
+              <div className="flex-col flex justify-center items-center text-center">
+                <h2 className="text-2xl font-semibold mb-4">{plan.name}</h2>
+                <div className="flex-1 flex justify-center">
+                  <div className="h-auto flex gap-2 items-center">
+                    <div className="w-20 h-auto shrink-0"></div>
+                  </div>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-semibold mt-8 flex items-baseline">
+                  <span>{plan.price}</span>
+                  <p className="text-lg font-sans font-normal">{plan.period}</p>
+                </h3>
+                <ul className="flex-1 self-start flex flex-col mt-8 gap-4 w-full">
+                  {plan.features.map((feature: string) => (
+                    <li key={feature} className="flex gap-2 items-center text-left">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                        className="w-5 h-5 shrink-0"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                      </svg>
+                      <p className="text-sm font-normal">{feature}</p>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={`/admin/subPkg/editSubscription/${plan.id}`}
+                  className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
+                >
+                  <span className="text-sm font-semibold whitespace-nowrap">{plan.editButton}</span>
+                </Link>
+              </div>
+            </section>
+          ))}
+        </div>
+        <p className="text-sm font-normal mt-8 text-slate-700">
+          {t('need-more')}{' '}
+          <a className="text-slate-500" href="https://discord.gg/KcAcHdrSQU">
+            {t('lets-talk')}
+          </a>
+        </p>
       </div>
-    
+    </div>
   );
 };
 
@@ -264,7 +186,5 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     },
   };
 };
-
-
 
 export default Pricing;

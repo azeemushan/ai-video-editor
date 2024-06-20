@@ -8,9 +8,6 @@ import Ed from '@/public/Ed.png'
 
 import Navbar from '../frontend/navbar';
 // 
-
-
-
 interface FrontLayoutProps {
   children: React.ReactNode;
 }
