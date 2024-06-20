@@ -5,7 +5,9 @@ import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import Image from 'next/image';
 import Ed from '@/public/Ed.png'
-import { useSession } from 'next-auth/react';
+
+import Navbar from '../frontend/navbar';
+// 
 
 
 
@@ -15,7 +17,7 @@ interface FrontLayoutProps {
 
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
-    const {status} = useSession()
+    
     
 
     
@@ -47,48 +49,14 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
         <meta property="og:url" content="" />
         <meta property="og:locale" content="en" />
       </Head>
+      
 
-      <header className="fixed inset-x-0 top-0 z-50 bg-white/10 backdrop-blur-sm">
-        <nav className="navbar flex h-16 items-center justify-between px-6 py-3 lg:px-8" aria-label="Global">
-          <div className="flex lg:flex-1">
-            <a href="#" className="font-display flex items-center p-1.5">
-              <Image src={Ed} className="w-6" alt="" />
+      
 
-              <span className="ml-2 block font-semibold text-xl">{t('Editur')}</span>
-            </a>
-          </div>
-          <div className="flex lg:hidden">
-            <button type="button" className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-neutral-700">
-              <span className="sr-only">{t('open_main')}</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </button>
-          </div>
-          <div className="hidden gap-x-12 lg:flex">
-            <a href="#" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
-              {t('features')}
-            </a>
-            <Link href="/pricing" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
-              {t('pricing')}
-            </Link>
-            { status === "authenticated" &&
-            <Link href="/dashboard" className="text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900">
-              {t('Dashboard')}
-            </Link>
-            }
-            <a href="#" target="_blank" rel="noopener noreferrer" className="hidden text-sm font-semibold leading-6 text-neutral-600 hover:text-neutral-900 xl:block">
-              {t('refer-earn')}
-            </a>
-          </div>
-          <div className="hidden gap-x-7 lg:flex lg:flex-1 lg:items-center lg:justify-end">
-            
-            <Link  href="/auth/join" className="rounded-full bg-violet-600 px-8 py-0.5 text-xs font-semibold leading-6 text-white" >{t('get-started')} <span className="text-[11px] opacity-90"> {t('videos-free')}</span></Link>
-            <Link   href="/auth/login" className="text-sm font-semibold leading-6 text-neutral-700 hover:text-neutral-900" >{t('login')} <span aria-hidden="true">&rarr;</span></Link>
-            
-          </div>
-        </nav>
-      </header>
+      <Navbar />
+
+
+
         <div className='mt-28'>
       {children}
       </div>

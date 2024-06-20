@@ -145,7 +145,7 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   const userId = session.metadata?.userId;
 
   if (subPackageId && userId) {
-    const subscriptions = await prisma.subscriptions.findMany({
+  const subscriptions = await prisma.subscriptions.findMany({
       where: {
         user_id: userId,
       },
@@ -175,7 +175,7 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
         },
       });
 
-      await prisma.subscriptionUsage.create({
+         await prisma.subscriptionUsage.create({
         data: {
           subscriptions_id: newSubscription.id,
           upload_count: 0,
@@ -183,6 +183,8 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
           min: 0,
         },
       });
+
+      
 
     } catch (err) {
       console.log(err);
