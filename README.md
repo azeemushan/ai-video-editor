@@ -1,3 +1,3 @@
 # editur
-Editur is an AI-based Video Editor 
-See live on www.editur.ai
+Editur is an AI-based Video Editor. 
+See it live on www.editur.ai
