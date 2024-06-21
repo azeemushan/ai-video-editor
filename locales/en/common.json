@@ -15,7 +15,7 @@
   "terms": "Terms and Conditions",
   "privacy": "Privacy Statement",
   "and": "and",
-  "sign-in": "Sign in",
+  "sign-in": "Login",
   "sign-in-with-email": "Sign in with Email",
   "sign-in-with-password": "Sign in with Password",
   "create-a-new-account": "Create a new account",
@@ -330,6 +330,7 @@
   "pay-success":"Payment Successful!",
   "pay-complete":"Thank you for your payment. Your transaction has been completed.",
   "pay-fail": "Payment Failed!",
-  "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again."
+  "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again.",
+  "admin-dashboard": "Admin Dashboard"
   
 }

@@ -138,6 +138,7 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
       <div className="mt-3 space-y-3">
         <Button
           type="submit"
+          className='text-white'
           color="primary"
           loading={formik.isSubmitting}
           active={formik.dirty}

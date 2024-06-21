@@ -184,6 +184,7 @@ const Login: NextPageWithLayout<
             </div>
             <div className="mt-3 space-y-3">
               <Button
+              className='text-white'
                 type="submit"
                 color="primary"
                 loading={formik.isSubmitting}

@@ -1,6 +1,12 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'OWNER', 'MEMBER');
 
+-- CreateEnum
+CREATE TYPE "UserType" AS ENUM ('USER', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "SubscriptionType" AS ENUM ('BASIC', 'PRO', 'PREMIUM');
+
 -- CreateTable
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL,
@@ -46,6 +52,7 @@ CREATE TABLE "User" (
     "image" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "user_type" "UserType" NOT NULL DEFAULT 'USER',
     "invalid_login_attempts" INTEGER NOT NULL DEFAULT 0,
     "lockedAt" TIMESTAMP(3),
 
@@ -195,6 +202,48 @@ CREATE TABLE "VideoClips" (
 );
 
 -- CreateTable
+CREATE TABLE "SubscriptionPackage" (
+    "id" SERIAL NOT NULL,
+    "price" INTEGER NOT NULL,
+    "upload_video_limit" INTEGER NOT NULL,
+    "generate_clips" INTEGER NOT NULL,
+    "max_length_video" TEXT NOT NULL,
+    "total_min" INTEGER NOT NULL,
+    "subscription_type" "SubscriptionType" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SubscriptionPackage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Subscriptions" (
+    "id" SERIAL NOT NULL,
+    "subscription_pkg_id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "start_date" TIMESTAMP(3) NOT NULL,
+    "end_date" TIMESTAMP(3) NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Subscriptions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SubscriptionUsage" (
+    "id" SERIAL NOT NULL,
+    "subscriptions_id" INTEGER NOT NULL,
+    "upload_count" INTEGER NOT NULL,
+    "clip_count" INTEGER NOT NULL,
+    "min" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SubscriptionUsage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "jackson_store" (
     "key" VARCHAR(1500) NOT NULL,
     "value" TEXT NOT NULL,
@@ -285,6 +334,9 @@ CREATE INDEX "Subscription_customerId_idx" ON "Subscription"("customerId");
 CREATE UNIQUE INDEX "VideoClips_clip_id_key" ON "VideoClips"("clip_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "VideoClips_exportId_key" ON "VideoClips"("exportId");
+
+-- CreateIndex
 CREATE INDEX "_jackson_store_namespace" ON "jackson_store"("namespace");
 
 -- CreateIndex
@@ -325,6 +377,15 @@ ALTER TABLE "UploadedVideo" ADD CONSTRAINT "UploadedVideo_userId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "VideoClips" ADD CONSTRAINT "VideoClips_videoId_fkey" FOREIGN KEY ("videoId") REFERENCES "UploadedVideo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Subscriptions" ADD CONSTRAINT "Subscriptions_subscription_pkg_id_fkey" FOREIGN KEY ("subscription_pkg_id") REFERENCES "SubscriptionPackage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Subscriptions" ADD CONSTRAINT "Subscriptions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SubscriptionUsage" ADD CONSTRAINT "SubscriptionUsage_subscriptions_id_fkey" FOREIGN KEY ("subscriptions_id") REFERENCES "Subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "jackson_index" ADD CONSTRAINT "jackson_index_storeKey_fkey" FOREIGN KEY ("storeKey") REFERENCES "jackson_store"("key") ON DELETE CASCADE ON UPDATE NO ACTION;

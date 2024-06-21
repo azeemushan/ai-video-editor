@@ -51,14 +51,22 @@ export default function Navbar() {
             </Link>
           )}
         </PopoverGroup>
+        
+        
         <div className="hidden gap-x-7 lg:flex lg:flex-1 lg:items-center lg:justify-end">
-          <Link href="/auth/join" className="rounded-full bg-violet-600 px-8 py-0.5 text-xs font-semibold leading-6 text-white">
-            {t('get-started')} <span className="text-[11px] opacity-90"> {t('videos-free')}</span>
-          </Link>
-          <Link href="/auth/login" className="text-sm font-semibold leading-6 text-neutral-700 hover:text-neutral-900">
-            {t('login')} <span aria-hidden="true">&rarr;</span>
-          </Link>
+        {status !== 'authenticated' && (
+  <>
+    <Link href="/auth/join" className="rounded-full bg-violet-600 px-8 py-0.5 text-xs font-semibold leading-6 text-white">
+      {t('get-started')} <span className="text-[11px] opacity-90"> {t('videos-free')}</span>
+    </Link>
+    <Link href="/auth/login" className="text-sm font-semibold leading-6 text-neutral-700 hover:text-neutral-900">
+      {t('login')} <span aria-hidden="true">&rarr;</span>
+    </Link>
+  </>
+)}
+
         </div>
+        
       </nav>
       <Dialog className="lg:hidden z-50" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
         <div className="fixed inset-0 z-50" />
@@ -92,9 +100,12 @@ export default function Navbar() {
                 )}
               </div>
               <div className="py-6">
+
+              {status !== 'authenticated' && (
                 <Link href="/auth/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
                   {t('login')} <span aria-hidden="true">&rarr;</span>
-                </Link>
+                </Link>)
+}
               </div>
             </div>
           </div>
