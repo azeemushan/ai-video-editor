@@ -15,6 +15,9 @@ interface FrontLayoutProps {
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
     const EdSrc = Ed.src; // Extract the image source URL
+    console.log(`================`)
+    console.log(EdSrc)
+    
     
     
 
@@ -43,7 +46,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
           property="og:description"
           content={t('homepage-title-ai')}
         />
-        <meta property="og:image" content={EdSrc} />
+        <meta property="og:image" content="/Ed.png" />
         <meta property="og:url" content="" />
         <meta property="og:locale" content="en" />
       </Head>
