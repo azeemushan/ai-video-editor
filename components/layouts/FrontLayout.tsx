@@ -14,9 +14,7 @@ interface FrontLayoutProps {
 
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
-    const EdSrc = Ed.src; // Extract the image source URL
-    console.log(`================`)
-    console.log(EdSrc)
+    
     
     
     
@@ -46,7 +44,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
           property="og:description"
           content={t('homepage-title-ai')}
         />
-        <meta property="og:image" content="/Ed.png" />
+        <meta property="og:image" content="https://www.editur.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FEd.0494cc35.png&w=640&q=75" />
         <meta property="og:url" content="" />
         <meta property="og:locale" content="en" />
       </Head>
