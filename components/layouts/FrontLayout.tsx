@@ -14,6 +14,7 @@ interface FrontLayoutProps {
 
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
+    const EdSrc = Ed.src; // Extract the image source URL
     
     
 
@@ -30,19 +31,19 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
         <meta name="theme-color" content="#ffffff" />
         <meta name="sitemap" content="/sitemap.xml" />
 
-        <link rel="canonical" href="https://videotap.com" />
+        <link rel="canonical" href="https://www.editur.ai" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Video Tap" />
+        <meta property="og:title" content="Editur.ai" />
         <meta
           name="description"
-          content="Transform videos into endless content like blog posts, short clips, summaries and more with Video Tap."
+          content={t('homepage-title-ai')}
         />
         <meta
           property="og:description"
-          content="Transform videos into endless content like blog posts, short clips, summaries and more with Video Tap."
+          content={t('homepage-title-ai')}
         />
-        <meta property="og:image" content="https://videotap.com/img/cover.jpg" />
+        <meta property="og:image" content={EdSrc} />
         <meta property="og:url" content="" />
         <meta property="og:locale" content="en" />
       </Head>
