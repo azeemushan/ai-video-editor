@@ -224,16 +224,18 @@ enum SubDurType {
 }
 
 model SubscriptionPackage {
-  id                 Int              @id @default(autoincrement())
-  price              Int
-  upload_video_limit Int
-  generate_clips     Int
-  max_length_video   String
-  total_min          Int
-  subscription_type  SubscriptionType
-  sub_dur_type       SubDurType
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  id                  Int              @id @default(autoincrement())
+  price               Int
+  upload_video_limit  Int
+  generate_clips      Int
+  max_length_video    String
+  total_min           Int
+  subscription_type   SubscriptionType
+  sub_dur_type        SubDurType
+  stripe_payment_link String?
+  stripe_priceId      String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
   Subscriptions Subscriptions[]
 }
@@ -243,17 +245,23 @@ enum SubscriptionType {
   PRO
   PREMIUM
 }
+
 model Subscriptions {
-  id                  Int      @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   subscription_pkg_id Int
   user_id             String
   start_date          DateTime
   end_date            DateTime
-  status              Boolean  @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  cancelAt            DateTime?
+  status              Boolean   @default(false)
 
-  subscriptionPackage SubscriptionPackage @relation(fields: [subscription_pkg_id], references: [id])
+  stripe_subscriptionId String
+  stripe_customerId     String
+  stripe_priceId        String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @default(now())
+
+  subscriptionPackage SubscriptionPackage @relation(fields: [subscription_pkg_id], references: [id], onDelete: Cascade)
   user                User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
   subscriptionUsage   SubscriptionUsage[]
 }

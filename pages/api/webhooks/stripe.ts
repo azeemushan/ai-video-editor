@@ -47,7 +47,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
       return;
     }
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-    console.log('Event received from Stripe:', event);
+    // console.log('Event received from Stripe:', event);
   } catch (err: any) {
     return res.status(400).json({ error: { message: err.message } });
   }
@@ -122,6 +122,10 @@ async function handleSubscriptionUpdated(event: Stripe.Event) {
 async function handleSubscriptionCreated(event: Stripe.Event) {
   const { customer, id, current_period_start, current_period_end, items } =
     event.data.object as Stripe.Subscription;
+    console.log(`subscription created =======================================`)
+    console.log(event)
+  
+    console.log(`subscription created =======================================`)
 
   await createStripeSubscription({
     customerId: customer as string,
@@ -139,10 +143,16 @@ function formatDate(date: Date): string {
 
 async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   const session = event.data.object as Stripe.Checkout.Session;
-  console.log('Checkout session completed:', session);
+  console.log(`checkout session completed  =======================================`)
+    console.log(event)
+  
+    console.log(`checkout session completed =======================================`)
+  
 
   const subPackageId = session.metadata?.sub_package_id;
   const userId = session.metadata?.userId;
+  console.log(subPackageId)
+  console.log(userId)
 
   if (subPackageId && userId) {
   const subscriptions = await prisma.subscriptions.findMany({

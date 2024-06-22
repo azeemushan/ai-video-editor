@@ -4,6 +4,8 @@ const client = new PrismaClient();
 const { hash } = require('bcryptjs');
 const { randomUUID } = require('crypto');
 const { addMonths } = require('date-fns');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 
 const ADMIN_EMAIL = 'admin@gmail.com';
 const ADMIN_PASSWORD = '123456789';
@@ -135,6 +137,8 @@ async function seedInvitations(teams: any[], users: any[]) {
   return newInvitations;
 }
 
+
+
 async function seedSubscriptionPackages() {
   const packages = [
     {
@@ -201,16 +205,75 @@ async function seedSubscriptionPackages() {
       },
     });
 
+    let packageId;
     if (!existingPackage) {
-      await client.subscriptionPackage.create({
+      const newPackage = await client.subscriptionPackage.create({
         data: pkg,
       });
-      console.log('Seeded subscription package', pkg);
+      console.log('Seeded subscription package', newPackage);
+      packageId = newPackage.id;
     } else {
-      console.log('Subscription package already exists', pkg);
+      console.log('Subscription package already exists', existingPackage);
+      packageId = existingPackage.id;
     }
+
+    // Check if the product already exists
+    const existingProducts = await stripe.products.list({
+      limit: 100,
+      active: true,
+    });
+
+    let product = existingProducts.data.find(p => p.name === pkg.subscription_type);
+
+    if (!product) {
+      product = await stripe.products.create({
+        name: pkg.subscription_type,
+      });
+    }
+
+    // Check if the price already exists
+    const existingPrices = await stripe.prices.list({
+      product: product.id,
+      active: true,
+    });
+
+    let stripePrice = existingPrices.data.find(p => p.unit_amount === pkg.price * 100 && p.recurring.interval === pkg.sub_dur_type.toLowerCase());
+
+    if (!stripePrice) {
+      stripePrice = await stripe.prices.create({
+        unit_amount: pkg.price * 100, // Stripe expects the amount in cents
+        currency: 'usd',
+        recurring: {
+          interval: pkg.sub_dur_type.toLowerCase() === 'monthly' ? 'month' : 'year', // 'month' or 'year'
+        },
+        product: product.id,
+      });
+    }
+
+    const paymentLink = await stripe.paymentLinks.create({
+      line_items: [{ price: stripePrice.id, quantity: 1 }],
+    });
+
+    await client.subscriptionPackage.update({
+      where: {
+        id: packageId,
+      },
+      data: {
+        stripe_payment_link: paymentLink.url,
+        stripe_priceId: stripePrice.id, // Add the stripe_priceId here
+      },
+    });
+
+    console.log('Stripe payment link and price ID created and updated', pkg);
   }
+
+  console.log('Stripe products, prices, and payment links created');
 }
+
+
+
+
+
 
 
 async function seedSingleSubscription() {
@@ -253,6 +316,6 @@ async function init() {
   // await seedTeamMembers(users, teams);
   // await seedInvitations(teams, users);
   await seedSubscriptionPackages();
-  await seedSingleSubscription();
+  // await seedSingleSubscription();
 }
 init();

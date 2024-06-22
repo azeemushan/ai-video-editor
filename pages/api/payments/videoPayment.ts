@@ -2,6 +2,7 @@ import env from '@/lib/env';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import { getSession } from '@/lib/session';
+import { prisma } from '@/lib/prisma';
 
 const stripe = new Stripe(`${env.stripe.secretKey}`);
 
@@ -10,7 +11,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { method } = req;
-
   try {
     switch (method) {
       case 'POST':
@@ -45,38 +45,41 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
     return; // Ensure to return here to stop further execution
   }
 
-  const { id, price, Subscription_type } = req.body;
+  const { id, price } = req.body;
+  const subscriptionPackage = await prisma.subscriptionPackage.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
   if (price) {
     try {
-      const checkoutSession = await stripe.checkout.sessions.create({
+       const str_session =  await stripe.checkout.sessions.create({
         metadata:{
           sub_package_id:id,
-          userId:session?.user.id
+          userId:session?.user.id as any
         },
         payment_method_types: ['card'],
         line_items: [
           {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: Subscription_type,
-                
-              },
-              unit_amount: +price * 100,
-            },
+            price: subscriptionPackage?.stripe_priceId as any, // Use the existing price ID
             quantity: 1,
           },
         ],
-        mode: 'payment',
+        mode: 'subscription',
         success_url: `${env.appUrl}/payments/paymentSuccess`,
         cancel_url: `${env.appUrl}/payments/paymentFail`,
       });
+      
+      if(subscriptionPackage){
+        res.status(200).json({
+          status: 'true',
+          message: 'redirect to payment',
+          data: { url: str_session.url ,sub_package_id:id},
+        });
 
-      res.status(200).json({
-        status: 'true',
-        message: 'redirect to payment',
-        data: { url: checkoutSession.url },
-      });
+      }
+
+      
     } catch (err) {
       console.log(err);
       res.json({ status: 'false', message: 'payment not done', data: {} });

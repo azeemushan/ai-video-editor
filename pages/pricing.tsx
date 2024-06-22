@@ -9,6 +9,8 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Loading } from '@/components/shared';
 
+
+
 const Pricing: NextPageWithLayout = () => {
   const router = useRouter();
   const { t } = useTranslation('common');
@@ -16,6 +18,9 @@ const Pricing: NextPageWithLayout = () => {
   const [subPkges, setSubPkges] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [pricingPlans, setPricingPlans] = useState<any>({ monthly: [], yearly: [] });
+  
+  
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,7 +121,9 @@ const Pricing: NextPageWithLayout = () => {
       price: numericPrice,
       Subscription_type: subscriptionType
     }).then((res) => {
+      
       router.push(res.data.data.url);
+
     });
   };
 
