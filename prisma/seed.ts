@@ -143,7 +143,8 @@ async function seedSubscriptionPackages() {
       generate_clips: 100,
       max_length_video: '00:45:00',
       total_min: 29 * 15,
-      subscription_type: 'BASIC'
+      subscription_type: 'BASIC',
+      sub_dur_type: 'MONTHLY'
     },
     {
       price: 79,
@@ -151,7 +152,8 @@ async function seedSubscriptionPackages() {
       generate_clips: 300,
       max_length_video: '02:00:00',
       total_min: 79 * 15,
-      subscription_type: 'PRO'
+      subscription_type: 'PRO',
+      sub_dur_type: 'MONTHLY'
     },
     {
       price: 189,
@@ -159,7 +161,35 @@ async function seedSubscriptionPackages() {
       generate_clips: 1000,
       max_length_video: '03:00:00',
       total_min: 189 * 15,
-      subscription_type: 'PREMIUM'
+      subscription_type: 'PREMIUM',
+      sub_dur_type: 'MONTHLY'
+    },
+    {
+      price: 23,
+      upload_video_limit: 10,
+      generate_clips: 100,
+      max_length_video: '00:45:00',
+      total_min: 23 * 15,
+      subscription_type: 'BASIC',
+      sub_dur_type: 'YEARLY'
+    },
+    {
+      price: 63,
+      upload_video_limit: 30,
+      generate_clips: 300,
+      max_length_video: '02:00:00',
+      total_min: 63 * 15,
+      subscription_type: 'PRO',
+      sub_dur_type: 'YEARLY'
+    },
+    {
+      price: 151,
+      upload_video_limit: 100,
+      generate_clips: 1000,
+      max_length_video: '03:00:00',
+      total_min: 151 * 15,
+      subscription_type: 'PREMIUM',
+      sub_dur_type: 'YEARLY'
     },
   ];
 
@@ -167,6 +197,7 @@ async function seedSubscriptionPackages() {
     const existingPackage = await client.subscriptionPackage.findFirst({
       where: {
         subscription_type: pkg.subscription_type,
+        sub_dur_type: pkg.sub_dur_type
       },
     });
 
@@ -180,6 +211,7 @@ async function seedSubscriptionPackages() {
     }
   }
 }
+
 
 async function seedSingleSubscription() {
   const firstUser = await client.user.findFirst();

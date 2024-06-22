@@ -218,6 +218,11 @@ model VideoClips {
   updatedAt     DateTime      @default(now()) @updatedAt
 }
 
+enum SubDurType {
+  MONTHLY
+  YEARLY
+}
+
 model SubscriptionPackage {
   id                 Int              @id @default(autoincrement())
   price              Int
@@ -226,6 +231,7 @@ model SubscriptionPackage {
   max_length_video   String
   total_min          Int
   subscription_type  SubscriptionType
+  sub_dur_type       SubDurType
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 
