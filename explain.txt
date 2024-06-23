@@ -1,39 +1,33 @@
-subscription logic to check limit : 
-    when the subscription for user created we will automatically insert record for the same subscription with default values  usage table.
-    case: if user subscribe to subscription pkg  1 and after expiration  user again subscribe the subscription pkg 1 then there will be two records for subsciption 1 but  we get the subscription data like user active subscription  and from usage table  we will get record based on active subsciption and latest date.
+async function handleSubscriptionUpdated(event: Stripe.Event) {
+  console.log(`subscription udpated ================================`);
+  console.log(event);
+  console.log(`subscription udpated ================================`);
+  const {
+    cancel_at,
+    id,
+    status,
+    current_period_end,
+    current_period_start,
 
+    items,
+  } = event.data.object as Stripe.Subscription;
 
-    import React from 'react';
-import { useTranslation } from 'next-i18next';
-
-
-import type { NextPageWithLayout } from 'types';
-
-const EditSubscribtion: NextPageWithLayout = () => {
-  const { t } = useTranslation('common');
-
-  return (
-    
-
-      <form className="max-w-md mx-auto border-spacing-1">
-    <h1 className=' font-bold text-4xl'>{t('edit-subscription')}</h1>
-  <div className="relative z-0 w-full mb-5 group">
-      <input type="text" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-      <label htmlFor="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{t('Price')}</label>
-  </div>
-  <div className="relative z-0 w-full mb-5 group">
-      <input type="text" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-      <label htmlFor="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{t('period')}</label>
-  </div>
-  <div className="relative z-0 w-full mb-5 group">
-      <input type="text" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-      <label htmlFor="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{t('features')}</label>
-  </div>
-  
-  <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{t('Submit')}</button>
-</form>
-
-  );
-};
-
-export default EditSubscribtion;
+  const subscription = await getBySubscriptionId(id);
+  if (subscription) {
+    const priceId = items.data.length > 0 ? items.data[0].plan?.id : '';
+    await prisma.subscriptions.updateMany({
+      where: { stripe_subscriptionId: id },
+      data: {
+        start_date: current_period_start
+          ? new Date(current_period_start * 1000)
+          : undefined,
+        end_date: current_period_end
+          ? new Date(current_period_end * 1000)
+          : undefined,
+        stripe_priceId: priceId,
+        cancelAt: new Date((cancel_at as any) * 1000),
+        status: status === 'active',
+      },
+    });
+  }
+}

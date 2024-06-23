@@ -331,6 +331,7 @@
   "pay-complete":"Thank you for your payment. Your transaction has been completed.",
   "pay-fail": "Payment Failed!",
   "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again.",
-  "admin-dashboard": "Admin Dashboard"
+  "admin-dashboard": "Admin Dashboard",
+  "current-plan": "current plan"
   
 }

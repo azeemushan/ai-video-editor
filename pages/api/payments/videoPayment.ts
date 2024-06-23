@@ -46,6 +46,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const { id, price } = req.body;
+  
   const subscriptionPackage = await prisma.subscriptionPackage.findUnique({
     where: {
       id: parseInt(id),
@@ -62,10 +63,16 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
         line_items: [
           {
             price: subscriptionPackage?.stripe_priceId as any, // Use the existing price ID
-            quantity: 1,
+            quantity: subscriptionPackage?.sub_dur_type ==="MONTHLY"?1:12,
           },
         ],
         mode: 'subscription',
+        subscription_data: {
+          metadata: {
+            sub_package_id: id,
+            userId: session?.user.id,
+          },
+        },
         success_url: `${env.appUrl}/payments/paymentSuccess`,
         cancel_url: `${env.appUrl}/payments/paymentFail`,
       });

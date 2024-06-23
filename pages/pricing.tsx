@@ -8,19 +8,18 @@ import { useTranslation } from 'next-i18next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Loading } from '@/components/shared';
-
-
+import { useSession } from 'next-auth/react';
 
 const Pricing: NextPageWithLayout = () => {
   const router = useRouter();
+  const { data } = useSession();
+  const id  = data?.user?.id ;
   const { t } = useTranslation('common');
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
   const [subPkges, setSubPkges] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [pricingPlans, setPricingPlans] = useState<any>({ monthly: [], yearly: [] });
-  
-  
-  
+  const [currentSubscription, setCurrentSubscription] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +27,6 @@ const Pricing: NextPageWithLayout = () => {
         const res = await axios.get('/api/subscriptionPackages/subPkg');
         const { data } = res.data;
 
-        // Sort plans by subscription_type: BASIC, PRO, other
         data.sort((a: any, b: any) => {
           if (a.subscription_type === 'BASIC') return -1;
           if (a.subscription_type === 'PRO' && b.subscription_type !== 'BASIC') return -1;
@@ -114,18 +112,33 @@ const Pricing: NextPageWithLayout = () => {
 
   const handleGetStarted = (id: any, price: any, subscriptionType: any) => {
     setLoading(true);
-
     const numericPrice = price.replace('$', '');
     axios.post('/api/payments/videoPayment', {
       id: id,
       price: numericPrice,
       Subscription_type: subscriptionType
     }).then((res) => {
-      
       router.push(res.data.data.url);
-
     });
   };
+
+  useEffect(() => {
+    if (id) {
+      const fetchSubscription = async () => {
+        try {
+          const res = await axios.post('/api/subscriptions/subscription', {
+            userId: id,
+            status: true
+          });
+          const activeSubscription = res.data.data; // assuming the first one is the active subscription
+          setCurrentSubscription(activeSubscription);
+        } catch (error) {
+          console.error('Error fetching current subscription:', error);
+        }
+      };
+      fetchSubscription();
+    }
+  }, [id]);
 
   if (loading) {
     return <Loading />;
@@ -160,7 +173,10 @@ const Pricing: NextPageWithLayout = () => {
           </div>
           <div className="flex flex-col md:flex-row gap-8 justify-center">
             {pricingPlans[planType]?.map((plan: any) => (
-              <section key={plan.id} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
+              <section key={plan.id} className={`flex-1 p-12 rounded-2xl relative ${plan.cardClass}`}>
+                {currentSubscription && currentSubscription.subscription_pkg_id === plan.id && (
+                  <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 ">{t('current-plan')}</span>
+                )}
                 <div className="flex-col flex justify-center items-center text-center">
                   <h2 className="text-2xl font-semibold mb-4">{plan.name}</h2>
                   <div className="flex-1 flex justify-center">
@@ -220,7 +236,6 @@ const Pricing: NextPageWithLayout = () => {
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  // Redirect to login page if landing page is disabled
   if (env.hideLandingPage) {
     return {
       redirect: {
