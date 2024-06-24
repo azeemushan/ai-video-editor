@@ -49,12 +49,12 @@ const Home: NextPageWithLayout = () => {
                   </div>
                 </div>
                 <div className="mt-12 flex flex-col items-center gap-2">
-                  <a href="/register" className="group flex relative rounded-full bg-violet-600 py-3.5 font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700">
+                  <Link href="/auth/join" className="group flex relative rounded-full bg-violet-600 py-3.5 font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700">
                     <span className="ml-4">{t('get-started')}</span>
                     <span className="ml-2 mr-4 inline-block -translate-y-px rounded-full bg-violet-800 px-3 py-1 text-xs font-medium leading-tight text-white transition-transform group-hover:scale-105">
                       {t('2-videos-free')}
                     </span>
-                  </a>
+                  </Link>
                   <p className="text-xs text-neutral-400">{t('no-credit-card-required')}</p>
                 </div>
                 <div className="mb-14 mt-20 flex items-center justify-center">
