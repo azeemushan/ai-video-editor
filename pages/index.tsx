@@ -12,6 +12,8 @@ import hassan from '../public/hassan.jpg'
 import jenny from '../public/jenny.jpg'
 import Image from 'next/image';
 import FrontLayout from '@/components/layouts/FrontLayout';
+import Link from 'next/link';
+
 
 const Home: NextPageWithLayout = () => {
   const { t } = useTranslation('common');
