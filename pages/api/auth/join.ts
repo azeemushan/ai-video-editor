@@ -9,7 +9,7 @@ import { createUser, getUser } from 'models/user';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { recordMetric } from '@/lib/metrics';
 import { getInvitation, isInvitationExpired } from 'models/invitation';
-import { validateRecaptcha } from '@/lib/recaptcha';
+// import { validateRecaptcha } from '@/lib/recaptcha';
 import { slackNotify } from '@/lib/slack';
 import { Team } from '@prisma/client';
 import { createVerificationToken } from 'models/verificationToken';
@@ -45,9 +45,9 @@ export default async function handler(
 
 // Signup the user
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { name, password, team, inviteToken, recaptchaToken } = req.body;
+  const { name, password, team, inviteToken } = req.body;
 
-  await validateRecaptcha(recaptchaToken);
+  // await validateRecaptcha(recaptchaToken);
 
   const invitation = inviteToken
     ? await getInvitation({ token: inviteToken })
