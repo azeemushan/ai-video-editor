@@ -237,11 +237,16 @@ async function seedSubscriptionPackages() {
       active: true,
     });
 
-    let stripePrice = existingPrices.data.find(p => p.unit_amount === pkg.price * 100 && p.recurring.interval === pkg.sub_dur_type.toLowerCase());
+    let priceAmount = pkg.price * 100; // Stripe expects the amount in cents
+    if (pkg.sub_dur_type.toLowerCase() === 'yearly') {
+      priceAmount *= 12; // Multiply by 12 for yearly subscription
+    }
+
+    let stripePrice = existingPrices.data.find(p => p.unit_amount === priceAmount && p.recurring.interval === pkg.sub_dur_type.toLowerCase());
 
     if (!stripePrice) {
       stripePrice = await stripe.prices.create({
-        unit_amount: pkg.price * 100, // Stripe expects the amount in cents
+        unit_amount: priceAmount,
         currency: 'usd',
         recurring: {
           interval: pkg.sub_dur_type.toLowerCase() === 'monthly' ? 'month' : 'year', // 'month' or 'year'
@@ -269,6 +274,7 @@ async function seedSubscriptionPackages() {
 
   console.log('Stripe products, prices, and payment links created');
 }
+
 
 
 

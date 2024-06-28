@@ -332,6 +332,12 @@
   "pay-fail": "Payment Failed!",
   "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again.",
   "admin-dashboard": "Admin Dashboard",
-  "current-plan": "current plan"
+  "current-plan": "current plan",
+  "manage-subscription-card": "Manage Subscription",
+  "upgrade": "Upgrade",
+  "current-package": "Current Package",
+  "upload-limit": "Upload Limit",
+  "total-minutes": "Total Minutes",
+  "dollar-colon": ": $"
   
 }

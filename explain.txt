@@ -1,33 +1,47 @@
-async function handleSubscriptionUpdated(event: Stripe.Event) {
-  console.log(`subscription udpated ================================`);
-  console.log(event);
-  console.log(`subscription udpated ================================`);
-  const {
-    cancel_at,
-    id,
-    status,
-    current_period_end,
-    current_period_start,
+try {
+    // Retrieve the current subscription
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-    items,
-  } = event.data.object as Stripe.Subscription;
+    // Retrieve the new price data
+    const newPriceData = await stripe.prices.retrieve(newPriceId);
+    const newPrice = newPriceData.unit_amount;
+    const oldPrice = subscription.items.data[0].price?.unit_amount;
 
-  const subscription = await getBySubscriptionId(id);
-  if (subscription) {
-    const priceId = items.data.length > 0 ? items.data[0].plan?.id : '';
-    await prisma.subscriptions.updateMany({
-      where: { stripe_subscriptionId: id },
-      data: {
-        start_date: current_period_start
-          ? new Date(current_period_start * 1000)
-          : undefined,
-        end_date: current_period_end
-          ? new Date(current_period_end * 1000)
-          : undefined,
-        stripe_priceId: priceId,
-        cancelAt: new Date((cancel_at as any) * 1000),
-        status: status === 'active',
-      },
+    // Ensure newPrice and oldPrice are not null
+    if (newPrice === null || oldPrice === null) {
+      throw new Error('Price data is invalid.');
+    }
+
+    // Calculate the difference amount
+    const differenceAmount = newPrice - oldPrice;
+
+    // Create an invoice item for the difference amount
+    await stripe.invoiceItems.create({
+      customer: subscription.customer as string,
+      amount: differenceAmount,
+      currency: 'usd',
+      description: 'Upgrade charge',
     });
+
+    // Finalize the invoice immediately
+    const invoice = await stripe.invoices.create({
+      customer: subscription.customer as string,
+      collection_method: 'charge_automatically',
+    });
+
+    await stripe.invoices.finalizeInvoice(invoice.id);
+
+    // Update the subscription to the new price without prorating
+    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{
+        id: subscription.items.data[0].id,
+        price: newPriceId,
+      }],
+      proration_behavior: 'none', // No proration handled by subscription update
+    });
+
+    res.status(200).json({ status: 'true', msg: 'Subscription upgraded and upgrade charge applied', data: updatedSubscription });
+  } catch (error: any) {
+    console.error('Error upgrading subscription:', error);
+    res.status(500).json({ status: 'false', msg: 'Something went wrong', error: error.message || error });
   }
-}

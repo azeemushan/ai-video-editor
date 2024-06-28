@@ -54,7 +54,11 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   });
   if (price) {
     try {
+
+    
+
        const str_session =  await stripe.checkout.sessions.create({
+
         metadata:{
           sub_package_id:id,
           userId:session?.user.id as any

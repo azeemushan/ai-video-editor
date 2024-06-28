@@ -45,8 +45,13 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
       where: {
         user_id: userId,
         status: status
+      },
+      include: {
+        subscriptionPackage: true, // This includes the related SubscriptionPackage data
+        subscriptionUsage: true 
       }
     });
+    
     
     
     if (subscription) {

@@ -9,16 +9,21 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Loading } from '@/components/shared';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+
 
 const Pricing: NextPageWithLayout = () => {
   const router = useRouter();
   const { data } = useSession();
-  const id  = data?.user?.id ;
+  const id = data?.user?.id;
   const { t } = useTranslation('common');
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
   const [subPkges, setSubPkges] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  const [pricingPlans, setPricingPlans] = useState<any>({ monthly: [], yearly: [] });
+  const [pricingPlans, setPricingPlans] = useState<any>({
+    monthly: [],
+    yearly: [],
+  });
   const [currentSubscription, setCurrentSubscription] = useState<any>(null);
 
   useEffect(() => {
@@ -26,10 +31,12 @@ const Pricing: NextPageWithLayout = () => {
       try {
         const res = await axios.get('/api/subscriptionPackages/subPkg');
         const { data } = res.data;
+        
 
         data.sort((a: any, b: any) => {
           if (a.subscription_type === 'BASIC') return -1;
-          if (a.subscription_type === 'PRO' && b.subscription_type !== 'BASIC') return -1;
+          if (a.subscription_type === 'PRO' && b.subscription_type !== 'BASIC')
+            return -1;
           return 1;
         });
 
@@ -58,6 +65,7 @@ const Pricing: NextPageWithLayout = () => {
         .filter((plan: any) => plan.sub_dur_type === 'MONTHLY')
         .map((newPlan: any) => ({
           id: newPlan.id,
+          stripe_priceId: newPlan.stripe_priceId,
           name: newPlan.subscription_type,
           price: `$${newPlan.price}`,
           features: [
@@ -65,7 +73,9 @@ const Pricing: NextPageWithLayout = () => {
             convertMaxLengthVideo(newPlan.max_length_video),
             `Generate ${newPlan.generate_clips} clips monthly`,
             'HD download',
-            newPlan.subscription_type !== 'BASIC' ? 'Translate to 29 languages (AI Dubbing)' : undefined,
+            newPlan.subscription_type !== 'BASIC'
+              ? 'Translate to 29 languages (AI Dubbing)'
+              : undefined,
           ].filter(Boolean),
           cardClass: getCardClass(newPlan.subscription_type),
           buttonClass: getButtonClass(newPlan.subscription_type),
@@ -76,6 +86,7 @@ const Pricing: NextPageWithLayout = () => {
         .filter((plan: any) => plan.sub_dur_type === 'YEARLY')
         .map((newPlan: any) => ({
           id: newPlan.id,
+          stripe_priceId: newPlan.stripe_priceId,
           name: newPlan.subscription_type,
           price: `$${newPlan.price}`,
           features: [
@@ -83,7 +94,9 @@ const Pricing: NextPageWithLayout = () => {
             convertMaxLengthVideo(newPlan.max_length_video),
             `Generate ${newPlan.generate_clips} clips monthly`,
             'HD download',
-            newPlan.subscription_type !== 'BASIC' ? 'Translate to 29 languages (AI Dubbing)' : undefined,
+            newPlan.subscription_type !== 'BASIC'
+              ? 'Translate to 29 languages (AI Dubbing)'
+              : undefined,
           ].filter(Boolean),
           cardClass: getCardClass(newPlan.subscription_type),
           buttonClass: getButtonClass(newPlan.subscription_type),
@@ -113,14 +126,17 @@ const Pricing: NextPageWithLayout = () => {
   const handleGetStarted = (id: any, price: any, subscriptionType: any) => {
     setLoading(true);
     const numericPrice = price.replace('$', '');
-    axios.post('/api/payments/videoPayment', {
-      id: id,
-      price: numericPrice,
-      Subscription_type: subscriptionType
-    }).then((res) => {
-      router.push(res.data.data.url);
-    });
+    axios
+      .post('/api/payments/videoPayment', {
+        id: id,
+        price: numericPrice,
+        Subscription_type: subscriptionType,
+      })
+      .then((res) => {
+        router.push(res.data.data.url);
+      });
   };
+  
 
   useEffect(() => {
     if (id) {
@@ -128,7 +144,7 @@ const Pricing: NextPageWithLayout = () => {
         try {
           const res = await axios.post('/api/subscriptions/subscription', {
             userId: id,
-            status: true
+            status: true,
           });
           const activeSubscription = res.data.data; // assuming the first one is the active subscription
           setCurrentSubscription(activeSubscription);
@@ -173,10 +189,17 @@ const Pricing: NextPageWithLayout = () => {
           </div>
           <div className="flex flex-col md:flex-row gap-8 justify-center">
             {pricingPlans[planType]?.map((plan: any) => (
-              <section key={plan.id} className={`flex-1 p-12 rounded-2xl relative ${plan.cardClass}`}>
-                {currentSubscription && currentSubscription.subscription_pkg_id === plan.id && (
-                  <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 ">{t('current-plan')}</span>
-                )}
+              <section
+                key={plan.id}
+                className={`flex-1 p-12 rounded-2xl relative ${plan.cardClass}`}
+              >
+                {currentSubscription &&
+                  currentSubscription.stripe_priceId ===
+                    plan.stripe_priceId && (
+                    <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 ">
+                      {t('current-plan')}
+                    </span>
+                  )}
                 <div className="flex-col flex justify-center items-center text-center">
                   <h2 className="text-2xl font-semibold mb-4">{plan.name}</h2>
                   <div className="flex-1 flex justify-center">
@@ -184,22 +207,45 @@ const Pricing: NextPageWithLayout = () => {
                   </div>
                   <h3 className="text-4xl md:text-5xl font-semibold mt-8 flex items-baseline">
                     <span>{plan.price}</span>
-                    <p className="text-lg font-sans font-normal">{plan.period}</p>
+                    <p className="text-lg font-sans font-normal">
+                      {plan.period}
+                    </p>
                   </h3>
-                  <button
-                    className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
-                    onClick={() => handleGetStarted(plan.id, plan.price, plan.name)}
-                  >
-                    <span className="text-sm font-semibold whitespace-nowrap">
-                      {plan.buttonText}
-                    </span>
-                  </button>
+                  {currentSubscription &&
+                  currentSubscription.stripe_priceId === plan.stripe_priceId ? (
+                    <Link href='/dashboard/manageSubscription' >
+                    <button
+                      className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
+                      
+                    >
+                      <span className="text-sm font-semibold whitespace-nowrap">
+                        {t('manage-subscription-card')}
+                      </span>
+                    </button>
+                    </Link>
+
+                  ) : (
+                    <button
+                      className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
+                      onClick={() =>
+                        handleGetStarted(plan.id, plan.price, plan.name)
+                      }
+                    >
+                      <span className="text-sm font-semibold whitespace-nowrap">
+                        {plan.buttonText}
+                      </span>
+                    </button>
+                  )}
+
                   <p className="text-sm font-normal mt-4 text-slate-500">
                     {t('secured-stripe')}
                   </p>
                   <ul className="flex-1 self-start flex flex-col mt-8 gap-4 w-full">
                     {plan.features.map((feature: string) => (
-                      <li key={feature} className="flex gap-2 items-center text-left">
+                      <li
+                        key={feature}
+                        className="flex gap-2 items-center text-left"
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -235,7 +281,9 @@ const Pricing: NextPageWithLayout = () => {
   );
 };
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   if (env.hideLandingPage) {
     return {
       redirect: {
