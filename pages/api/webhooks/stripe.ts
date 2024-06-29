@@ -112,9 +112,13 @@ async function handleSubscriptionUpdated(event: Stripe.Event) {
         : undefined,
       stripe_priceId: priceId,
       cancelAt: cancel_at ? new Date((cancel_at as any) * 1000) : null,
-      status: status === 'active',
+      status: status === 'active' || status === 'trialing',
     },
   });
+
+  
+
+
 }
 
 async function handleSubscriptionCreated(event: Stripe.Event) {

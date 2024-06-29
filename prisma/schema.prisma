@@ -237,7 +237,7 @@ model SubscriptionPackage {
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
 
-  Subscriptions       Subscriptions[]
+  Subscriptions Subscriptions[]
 }
 
 enum SubscriptionType {
@@ -258,12 +258,14 @@ model Subscriptions {
   stripe_subscriptionId String
   stripe_customerId     String
   stripe_priceId        String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @default(now())
+  
 
-  subscriptionPackage   SubscriptionPackage? @relation(fields: [stripe_priceId], references: [stripe_priceId], onDelete: Cascade)
-  user                  User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  subscriptionUsage     SubscriptionUsage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  subscriptionPackage SubscriptionPackage? @relation(fields: [stripe_priceId], references: [stripe_priceId], onDelete: Cascade)
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  subscriptionUsage   SubscriptionUsage[]
 }
 
 model SubscriptionUsage {

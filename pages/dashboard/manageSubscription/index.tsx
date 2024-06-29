@@ -31,15 +31,36 @@ function ManageSubscription() {
     }
   }, [id]);
 
+  const handleDelete = async () => {
+    try {
+      
+      const response = await axios.post('/api/subscriptions/cancel', {
+        subscriptionId: currentSubscription.stripe_subscriptionId,
+      });
+      if (response.status === 200) {
+      
+        alert('Subscription cancelled successfully');
+      }
+    } catch (error) {
+      console.error('Error cancelling subscription:', error);
+      alert('Failed to cancel subscription');
+    }
+  };
+
   
 
   const upgradeButton = () => {
     return (
+      <>
       <Link href="/dashboard/manageSubscription/upgradeSubscription">
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           {t('upgrade')}
         </button>
       </Link>
+      <button onClick={handleDelete} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+      {t('delete')}
+    </button>
+    </>
     );
   };
 
@@ -60,6 +81,11 @@ function ManageSubscription() {
       </div>
     );
   };
+
+  useEffect(()=>{
+    console.log(currentSubscription)
+
+  },[currentSubscription])
 
   return (
     <div className="container mx-auto p-4">
