@@ -13,17 +13,18 @@ import jenny from '../public/jenny.jpg'
 import Image from 'next/image';
 import FrontLayout from '@/components/layouts/FrontLayout';
 import Link from 'next/link';
+import ContactForm from '@/components/Forms/ContactForm';
 
 
 const Home: NextPageWithLayout = () => {
   const { t } = useTranslation('common');
-  
-  
+
+
 
   return (
-    
-      
-<FrontLayout>
+
+
+    <FrontLayout>
       <main>
         <div className="relative">
           <div className="mt-20 md:mt-0">
@@ -323,12 +324,17 @@ const Home: NextPageWithLayout = () => {
                 </div>
               </div>
             </section>
+
+            {/* contact form  */}
+            <ContactForm />
+
+
           </div>
         </div>
       </main>
-</FrontLayout>
-      
-    
+    </FrontLayout>
+
+
   );
 };
 
