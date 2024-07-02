@@ -320,7 +320,7 @@
   "need-more":"Need more?",
   "lets-talk":"Let's talk!?",
   "edit-subscription":"Edit Subscription",
-  "Price":"Price",
+  "Price":"Price :",
   "upload-video-limit":"Upload Video Limit",
   "Submit":"Submit",
   "Editur":"Editur.ai",
@@ -338,6 +338,10 @@
   "current-package": "Current Package",
   "upload-limit": "Upload Limit",
   "total-minutes": "Total Minutes",
-  "dollar-colon": ": $"
-  
+  "dollar-colon": "$",
+
+  "available-packages": "Available Packages",
+  "upgrade-plan": "Upgrade Plan",
+  "delete-success-message": "Deleted successfully",
+  "success-message": "Subscription Upgraded Successfully"
 }

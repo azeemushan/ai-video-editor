@@ -63,15 +63,15 @@ const Pricing: NextPageWithLayout = () => {
 
   const getCardClass = (subscriptionType: string) => {
     if (subscriptionType === 'PRO') {
-      return 'bg-black text-white';
+      return 'bg-slate-200 text-slate-950';
     } else {
-      return 'bg-[rgb(248,236,236)] text-slate-950';
+      return 'bg-slate-200 text-slate-950';
     }
   };
 
   const getButtonClass = (subscriptionType: string) => {
     if (subscriptionType === 'PRO') {
-      return 'bg-white text-slate-950 border-white';
+      return 'bg-black text-white border-white';
     } else {
       return 'border border-slate-200 text-slate-950 bg-white';
     }
