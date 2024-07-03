@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { NextPageWithLayout } from 'types';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -7,10 +7,33 @@ import { useTranslation } from 'next-i18next';
 import axios from 'axios';
 import Link from 'next/link';
 
+
 const Pricing: NextPageWithLayout = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
   const [pricingPlans, setPricingPlans] = useState<any>({ monthly: [], yearly: [] }); // Initialize as empty object
   const { t } = useTranslation('common');
+  const updatePricingPlans = useCallback((data: any[], period: 'monthly' | 'yearly') => {
+    return data
+      .filter((plan: any) => plan.sub_dur_type.toLowerCase() === period)
+      .map((newPlan) => ({
+        id: newPlan.id,
+        name: newPlan.subscription_type,
+        price: `$${newPlan.price}`,
+        period,
+        features: [
+          `Upload ${newPlan.upload_video_limit} videos ${t("Monthly")}`,
+          convertMaxLengthVideo(newPlan.max_length_video),
+          `Generate ${newPlan.generate_clips} clips ${t("Monthly")}`,
+          period === 'monthly' ? 'HD download' : '4K download',
+          period === 'yearly' && newPlan.subscription_type !== 'BASIC' ? 'Translate to 29 languages (AI Dubbing)' : undefined,
+        ].filter(Boolean),
+        cardClass: getCardClass(newPlan.subscription_type),
+        buttonClass: getButtonClass(newPlan.subscription_type),
+        buttonText: 'Get Started',
+        editButton: 'Edit',
+      }));
+  }, [t]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,29 +60,8 @@ const Pricing: NextPageWithLayout = () => {
     };
 
     fetchData();
-  }, []);
+  }, [updatePricingPlans]);
 
-  const updatePricingPlans = (data: any[], period: 'monthly' | 'yearly') => {
-    return data
-      .filter((plan: any) => plan.sub_dur_type.toLowerCase() === period)
-      .map((newPlan) => ({
-        id: newPlan.id,
-        name: newPlan.subscription_type,
-        price: `$${newPlan.price}`,
-        period,
-        features: [
-          `Upload ${newPlan.upload_video_limit} videos ${t("Monthly")}`,
-          convertMaxLengthVideo(newPlan.max_length_video),
-          `Generate ${newPlan.generate_clips} clips ${t("Monthly")}`,
-          period === 'monthly' ? 'HD download' : '4K download',
-          period === 'yearly' && newPlan.subscription_type !== 'BASIC' ? 'Translate to 29 languages (AI Dubbing)' : undefined,
-        ].filter(Boolean),
-        cardClass: getCardClass(newPlan.subscription_type),
-        buttonClass: getButtonClass(newPlan.subscription_type),
-        buttonText: 'Get Started',
-        editButton: 'Edit',
-      }));
-  };
 
   const getCardClass = (subscriptionType: string) => {
     if (subscriptionType === 'PRO') {

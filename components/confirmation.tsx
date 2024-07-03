@@ -1,4 +1,9 @@
 import React from 'react';
+import { GetServerSidePropsContext } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
+import env from '@/lib/env';
+
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -15,6 +20,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const { t } = useTranslation('common');
+
   if (!isOpen) return null;
 
   return (
@@ -27,18 +34,37 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onConfirm}
             className="px-6 py-2 bg-red-500 text-white rounded-md text-lg hover:bg-red-600 transition duration-300"
           >
-            Confirm
+            {t('confirm')}
           </button>
           <button
             onClick={onCancel}
             className="px-6 py-2 bg-gray-500 text-white rounded-md text-lg hover:bg-gray-600 transition duration-300"
           >
-            Cancel
+            {t('cancel')}
           </button>
         </div>
       </div>
     </div>
   );
+};
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Redirect to login page if landing page is disabled
+  if (env.hideLandingPage) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: true,
+      },
+    };
+  }
+
+  const { locale } = context;
+
+  return {
+    props: {
+      ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
+    },
+  };
 };
 
 export default ConfirmationModal;
