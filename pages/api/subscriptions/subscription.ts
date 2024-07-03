@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSubscription } from 'models/subscriptions';
+import { prisma } from '@/lib/prisma';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
@@ -8,6 +9,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'GET':
         await handleGET(req, res);
         break;
+        case 'POST':
+          await handlePOST(req, res);
+          break;
 
       default:
         res.setHeader('Allow', 'GET, POST, PUT');
@@ -29,5 +33,34 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse) => {
     res.json({ status: 'false', message: 'some thing went wrong', data: {} });
   }
 
+};
+
+
+const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { userId, status } = req.body;
+
+  try {
+    // Fetch subscriptions based on userId and status
+    const subscription = await prisma.subscriptions.findFirst({
+      where: {
+        user_id: userId,
+        status: status
+      },
+      include: {
+        subscriptionPackage: true, // This includes the related SubscriptionPackage data
+        subscriptionUsage: true 
+      }
+    });
+    
+    
+    
+    if (subscription) {
+      res.status(200).json({ status: 'true', message: 'subscription found', data: subscription });
+    } else {
+      res.status(404).json({ status: 'false', message: 'no active subscription found', data: {} });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'false', message: 'something went wrong', data: {} });
+  }
 };
 

@@ -75,10 +75,11 @@ const latestSubscriptionUsage:any = await prisma.subscriptionUsage.findFirst({
 });
 
 if (
-  latestSubscriptionUsage.upload_count >= subscription.subscriptionPackage.upload_video_limit ||
-  latestSubscriptionUsage.clip_count >= subscription.subscriptionPackage.generate_clips
+  subscription.subscriptionPackage &&
+  (latestSubscriptionUsage.upload_count >= subscription.subscriptionPackage.upload_video_limit ||
+    latestSubscriptionUsage.clip_count >= subscription.subscriptionPackage.generate_clips)
 ) {
-return  res.json({ status: 'false', message: 'payment required', data: 'payment' });
+  return res.json({ status: 'false', message: 'payment required', data: 'payment' });
 }
 
 //  check usage

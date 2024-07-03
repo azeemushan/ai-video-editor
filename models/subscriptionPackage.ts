@@ -12,6 +12,43 @@ export const getSubscriptionPackage = async () => {
 };
 
 
+export const getUpSubscriptionPackage = async (stripe_priceId:string) => {
+  try {
+    // First, find the creation timestamp of the given stripe_priceId
+    const currentPackage = await prisma.subscriptionPackage.findUnique({
+      where: {
+        stripe_priceId,
+      },
+    });
+
+    if (!currentPackage) {
+      throw new Error('Subscription package not found');
+    }
+
+    const { createdAt } = currentPackage;
+
+    // Fetch packages created after the current package's creation timestamp
+    const subscriptionPackages = await prisma.subscriptionPackage.findMany({
+      where: {
+        createdAt: {
+          gt: createdAt,
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    return subscriptionPackages;
+  } catch (error) {
+    console.error('Error fetching subscription packages:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+
 export const getSingleSubscriptionPackage = async (id:any) => {
   try {
     const subscriptionPackage = await prisma.subscriptionPackage.findUnique({

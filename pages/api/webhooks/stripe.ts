@@ -5,13 +5,7 @@ import env from '@/lib/env';
 import { prisma } from '@/lib/prisma';
 
 import type { Readable } from 'node:stream';
-import {
-  createStripeSubscription,
-  deleteStripeSubscription,
-  getBySubscriptionId,
-  updateStripeSubscription,
-} from 'models/subscription';
-import { getByCustomerId } from 'models/team';
+import { getBySubscriptionId } from 'models/subscription';
 
 export const config = {
   api: {
@@ -33,6 +27,7 @@ const relevantEvents: Stripe.Event.Type[] = [
   'customer.subscription.updated',
   'customer.subscription.deleted',
   'checkout.session.completed', // Added the checkout session completed event
+  'charge.succeeded',
 ];
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
@@ -47,7 +42,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
       return;
     }
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-    console.log('Event received from Stripe:', event);
+    // console.log('Event received from Stripe:', event);
   } catch (err: any) {
     return res.status(400).json({ error: { message: err.message } });
   }
@@ -62,13 +57,12 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
           await handleSubscriptionUpdated(event);
           break;
         case 'customer.subscription.deleted':
-          await deleteStripeSubscription(
-            (event.data.object as Stripe.Subscription).id
-          );
+          await handleSubscriptionDeleted(event);
           break;
         case 'checkout.session.completed':
           await handleCheckoutSessionCompleted(event);
           break;
+          
         default:
           throw new Error('Unhandled relevant event!');
       }
@@ -82,7 +76,13 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
   }
   return res.status(200).json({ received: true });
 }
-
+async function handleSubscriptionDeleted(event: Stripe.Event) {
+  const { id, canceled_at } = event.data.object as Stripe.Subscription;
+  await prisma.subscriptions.updateMany({
+    where: { stripe_subscriptionId: id },
+    data: { cancelAt: new Date((canceled_at as any) * 1000), status: false },
+  });
+}
 async function handleSubscriptionUpdated(event: Stripe.Event) {
   const {
     cancel_at,
@@ -90,104 +90,96 @@ async function handleSubscriptionUpdated(event: Stripe.Event) {
     status,
     current_period_end,
     current_period_start,
-    customer,
+    
     items,
   } = event.data.object as Stripe.Subscription;
+  // console.log(`subscription udpated ================================`);
+  // console.log(event);
+  // console.log(metadata);
+  // console.log(`subscription udpated ================================`);
 
-  const subscription = await getBySubscriptionId(id);
-  if (!subscription) {
-    const teamExists = await getByCustomerId(customer as string);
-    if (!teamExists) {
-      return;
-    } else {
-      await handleSubscriptionCreated(event);
-    }
-  } else {
-    const priceId = items.data.length > 0 ? items.data[0].plan?.id : '';
-    //type Stripe.Subscription.Status = "active" | "canceled" | "incomplete" | "incomplete_expired" | "past_due" | "paused" | "trialing" | "unpaid"
-    await updateStripeSubscription(id, {
-      active: status === 'active',
-      endDate: current_period_end
-        ? new Date(current_period_end * 1000)
-        : undefined,
-      startDate: current_period_start
+  await getBySubscriptionId(id);
+
+  const priceId = items.data.length > 0 ? items.data[0].plan?.id : '';
+  await prisma.subscriptions.updateMany({
+    where: { stripe_subscriptionId: id },
+    data: {
+      start_date: current_period_start
         ? new Date(current_period_start * 1000)
         : undefined,
-      cancelAt: cancel_at ? new Date(cancel_at * 1000) : undefined,
-      priceId,
-    });
-  }
+      end_date: current_period_end
+        ? new Date(current_period_end * 1000)
+        : undefined,
+      stripe_priceId: priceId,
+      cancelAt: cancel_at ? new Date((cancel_at as any) * 1000) : null,
+      status: status === 'active' || status === 'trialing',
+    },
+  });
+
+  
+
+
 }
 
 async function handleSubscriptionCreated(event: Stripe.Event) {
-  const { customer, id, current_period_start, current_period_end, items } =
-    event.data.object as Stripe.Subscription;
-
-  await createStripeSubscription({
-    customerId: customer as string,
+  const {
+    customer,
     id,
-    active: true,
-    startDate: new Date(current_period_start * 1000),
-    endDate: new Date(current_period_end * 1000),
-    priceId: items.data.length > 0 ? items.data[0].plan?.id : '',
+    current_period_start,
+    current_period_end,
+    items,
+    metadata,
+  } = event.data.object as Stripe.Subscription;
+
+  const newSubscription = await prisma.subscriptions.create({
+    data: {
+      subscription_pkg_id: +metadata.sub_package_id,
+      user_id: metadata.userId,
+      start_date: new Date(current_period_start * 1000),
+      end_date: new Date(current_period_end * 1000),
+      stripe_subscriptionId: id,
+      stripe_customerId: customer as string,
+      stripe_priceId: items.data.length > 0 ? items.data[0].plan?.id : '',
+      status: true,
+    },
+  });
+  await prisma.subscriptionUsage.create({
+    data: {
+      subscriptions_id: newSubscription.id,
+      upload_count: 0,
+      clip_count: 0,
+      min: 0,
+    },
   });
 }
-function formatDate(date: Date): string {
-  return date.toISOString();
-}
-
 
 async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   const session = event.data.object as Stripe.Checkout.Session;
-  console.log('Checkout session completed:', session);
+  // console.log(`session checkout completed ==========`);
+  // console.log(session);
 
-  const subPackageId = session.metadata?.sub_package_id;
-  const userId = session.metadata?.userId;
+  // Retrieve the subscription
+  const subscription = await stripe.subscriptions.retrieve(
+    session.subscription as string
+  );
 
-  if (subPackageId && userId) {
-  const subscriptions = await prisma.subscriptions.findMany({
-      where: {
-        user_id: userId,
+  // console.log(`Subscription details ==========`);
+  // console.log(subscription);
+
+  // Set the default payment method for the customer
+  if (subscription.default_payment_method) {
+    await stripe.customers.update(subscription.customer as string, {
+      invoice_settings: {
+        default_payment_method: subscription.default_payment_method as string,
       },
     });
-    if (subscriptions.length > 0) {
-    await prisma.subscriptions.updateMany({
-      where: { user_id: userId },
-      data: { status: false },
-    });
+    console.log('Default payment method set for the customer.');
+  } else {
+    console.error('subscription.default_payment_method is null');
   }
 
-    const startDate = new Date(session.created * 1000); 
-    const endDate = new Date(startDate);
-    endDate.setMonth(endDate.getMonth() + 1);
-
-    const formattedStartDate = formatDate(startDate);
-    const formattedEndDate = formatDate(endDate);
-
-    try {
-      const newSubscription = await prisma.subscriptions.create({
-        data: {
-          subscription_pkg_id: +subPackageId,
-          user_id: userId,
-          start_date: formattedStartDate,
-          end_date: formattedEndDate,
-          status: true,
-        },
-      });
-
-         await prisma.subscriptionUsage.create({
-        data: {
-          subscriptions_id: newSubscription.id,
-          upload_count: 0,
-          clip_count: 0,
-          min: 0,
-        },
-      });
-
-      
-
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  // Continue with any additional logic needed for handling a completed checkout session
+  // ...
 }
+
+

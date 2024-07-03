@@ -218,16 +218,24 @@ model VideoClips {
   updatedAt     DateTime      @default(now()) @updatedAt
 }
 
+enum SubDurType {
+  MONTHLY
+  YEARLY
+}
+
 model SubscriptionPackage {
-  id                 Int              @id @default(autoincrement())
-  price              Int
-  upload_video_limit Int
-  generate_clips     Int
-  max_length_video   String
-  total_min          Int
-  subscription_type  SubscriptionType
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  id                  Int              @id @default(autoincrement())
+  price               Int
+  upload_video_limit  Int
+  generate_clips      Int
+  max_length_video    String
+  total_min           Int
+  subscription_type   SubscriptionType
+  sub_dur_type        SubDurType
+  stripe_payment_link String?
+  stripe_priceId      String?          @unique
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
   Subscriptions Subscriptions[]
 }
@@ -237,18 +245,26 @@ enum SubscriptionType {
   PRO
   PREMIUM
 }
+
 model Subscriptions {
-  id                  Int      @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   subscription_pkg_id Int
   user_id             String
   start_date          DateTime
   end_date            DateTime
-  status              Boolean  @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  cancelAt            DateTime?
+  status              Boolean   @default(false)
 
-  subscriptionPackage SubscriptionPackage @relation(fields: [subscription_pkg_id], references: [id])
-  user                User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  stripe_subscriptionId String
+  stripe_customerId     String
+  stripe_priceId        String?
+  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  subscriptionPackage SubscriptionPackage? @relation(fields: [stripe_priceId], references: [stripe_priceId], onDelete: Cascade)
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
   subscriptionUsage   SubscriptionUsage[]
 }
 
@@ -263,6 +279,18 @@ model SubscriptionUsage {
 
   subscription Subscriptions @relation(fields: [subscriptions_id], references: [id], onDelete: Cascade)
 }
+
+model Contacts {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  message   String?  // Optional field
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
 
 model jackson_store {
   key        String    @id(map: "_jackson_store_key") @db.VarChar(1500)

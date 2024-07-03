@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NextPageWithLayout } from 'types';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 const Pricing: NextPageWithLayout = () => {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
-  const [pricingPlans, setPricingPlans] = useState<any[]>([]); // Initialize as empty array
+  const [pricingPlans, setPricingPlans] = useState<any>({ monthly: [], yearly: [] }); // Initialize as empty object
   const { t } = useTranslation('common');
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Pricing: NextPageWithLayout = () => {
           yearly: updatePricingPlans(data, 'yearly'),
         };
 
-        setPricingPlans(updatedPlans as any);
+        setPricingPlans(updatedPlans);
       } catch (error) {
         console.error('Error fetching subscription packages:', error);
       }
@@ -40,40 +40,40 @@ const Pricing: NextPageWithLayout = () => {
   }, []);
 
   const updatePricingPlans = (data: any[], period: 'monthly' | 'yearly') => {
-    return data.map((newPlan) => ({
-      id: newPlan.id,
-      name: newPlan.subscription_type,
-      price: `$${newPlan.price}`,
-      features: [
-        `Upload ${newPlan.upload_video_limit} videos monthly`,
-        convertMaxLengthVideo(newPlan.max_length_video),
-        `Generate ${newPlan.generate_clips} clips monthly`,
-        period === 'monthly' ? 'HD download' : '4K download',
-        period !== 'monthly' && newPlan.subscription_type !== 'BASIC'
-          ? 'Translate to 29 languages (AI Dubbing)'
-          : undefined,
-      ].filter(Boolean),
-      cardClass: getCardClass(newPlan.subscription_type, period),
-      buttonClass: getButtonClass(newPlan.subscription_type, period),
-      buttonText: 'Get Started',
-      editButton: 'Edit',
-    }));
+    return data
+      .filter((plan: any) => plan.sub_dur_type.toLowerCase() === period)
+      .map((newPlan) => ({
+        id: newPlan.id,
+        name: newPlan.subscription_type,
+        price: `$${newPlan.price}`,
+        period,
+        features: [
+          `Upload ${newPlan.upload_video_limit} videos ${t("Monthly")}`,
+          convertMaxLengthVideo(newPlan.max_length_video),
+          `Generate ${newPlan.generate_clips} clips ${t("Monthly")}`,
+          period === 'monthly' ? 'HD download' : '4K download',
+          period === 'yearly' && newPlan.subscription_type !== 'BASIC' ? 'Translate to 29 languages (AI Dubbing)' : undefined,
+        ].filter(Boolean),
+        cardClass: getCardClass(newPlan.subscription_type),
+        buttonClass: getButtonClass(newPlan.subscription_type),
+        buttonText: 'Get Started',
+        editButton: 'Edit',
+      }));
   };
-  
 
-  const getCardClass = (subscriptionType: string, period: 'monthly' | 'yearly') => {
+  const getCardClass = (subscriptionType: string) => {
     if (subscriptionType === 'PRO') {
-      return 'bg-black text-white';
+      return 'bg-slate-200 text-slate-950';
     } else {
-      return period === 'monthly' ? 'bg-[rgb(248,236,236)] text-slate-950' : 'bg-slate-950 text-white';
+      return 'bg-slate-200 text-slate-950';
     }
   };
 
-  const getButtonClass = (subscriptionType: string, period: 'monthly' | 'yearly') => {
+  const getButtonClass = (subscriptionType: string) => {
     if (subscriptionType === 'PRO') {
-      return 'bg-white text-slate-950 border-white';
+      return 'bg-black text-white border-white';
     } else {
-      return period === 'monthly' ? 'border border-slate-200 text-slate-950 bg-white' : 'bg-white text-slate-950 border-white';
+      return 'border border-slate-200 text-slate-950 bg-white';
     }
   };
 
@@ -103,7 +103,7 @@ const Pricing: NextPageWithLayout = () => {
           </button>
           <button
             onClick={() => setPlanType('yearly')}
-            className={`px-6 py-3 h-12 hidden rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+            className={`px-6 py-3 h-12 rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
           >
             <span className="text-sm font-semibold">{t('Yearly')}</span>
             <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
@@ -113,7 +113,7 @@ const Pricing: NextPageWithLayout = () => {
         </div>
         <div className="flex flex-col md:flex-row gap-8 justify-center">
           {pricingPlans[planType]?.map((plan: any) => (
-            <section key={plan.name} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
+            <section key={plan.id} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
               <div className="flex-col flex justify-center items-center text-center">
                 <h2 className="text-2xl font-semibold mb-4">{plan.name}</h2>
                 <div className="flex-1 flex justify-center">
@@ -123,7 +123,7 @@ const Pricing: NextPageWithLayout = () => {
                 </div>
                 <h3 className="text-4xl md:text-5xl font-semibold mt-8 flex items-baseline">
                   <span>{plan.price}</span>
-                  <p className="text-lg font-sans font-normal">{plan.period}</p>
+                  <p className="text-lg font-sans font-normal">{t('Monthly')}</p>
                 </h3>
                 <ul className="flex-1 self-start flex flex-col mt-8 gap-4 w-full">
                   {plan.features.map((feature: string) => (

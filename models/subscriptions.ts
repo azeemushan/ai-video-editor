@@ -16,6 +16,14 @@ export const getSubscription = async () => {
   }
 };
 
+export const deleteStripeSubscription = async (id: string) => {
+  return await prisma.subscriptions.deleteMany({
+    where: {
+      stripe_subscriptionId:id
+    },
+  });
+};
+
 
 
 

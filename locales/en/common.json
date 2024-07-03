@@ -320,7 +320,7 @@
   "need-more":"Need more?",
   "lets-talk":"Let's talk!?",
   "edit-subscription":"Edit Subscription",
-  "Price":"Price",
+  "Price":"Price :",
   "upload-video-limit":"Upload Video Limit",
   "Submit":"Submit",
   "Editur":"Editur.ai",
@@ -331,6 +331,24 @@
   "pay-complete":"Thank you for your payment. Your transaction has been completed.",
   "pay-fail": "Payment Failed!",
   "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again.",
-  "admin-dashboard": "Admin Dashboard"
-  
+  "admin-dashboard": "Admin Dashboard",
+  "current-plan": "current plan",
+  "manage-subscription-card": "Manage Subscription",
+  "upgrade": "Upgrade",
+  "current-package": "Current Package",
+  "upload-limit": "Upload Limit",
+  "total-minutes": "Total Minutes",
+  "dollar-colon": "$",
+
+  "available-packages": "Available Packages",
+  "upgrade-plan": "Upgrade Plan",
+  "delete-success-message": "Deleted successfully",
+  "success-message": "Subscription Upgraded Successfully",
+  "have-questions-or-need-support?": "Have questions or need support? Reach out to us at editor.ai and discover how we can help you transform long videos into captivating short clips using AI technology.",
+  "phone-number": "Phone Number",
+  "your-message": "Your Message",
+  "send-message": "Send message",
+  "contacts": "Contacts",
+  "message": "Message"
+
 }
