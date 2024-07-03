@@ -19,12 +19,12 @@ export default function Navbar() {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <a href="#" className="font-display flex items-center p-1.5">
+          <Link href="/" className="font-display flex items-center p-1.5">
             <Image src={Ed} className="w-6" alt="" />
             <span className="ml-2 block font-semibold text-xl">
               {t('Editur')}
             </span>
-          </a>
+          </Link>
         </div>
         <div className="flex lg:hidden">
           <button
