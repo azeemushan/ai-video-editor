@@ -280,6 +280,18 @@ model SubscriptionUsage {
   subscription Subscriptions @relation(fields: [subscriptions_id], references: [id], onDelete: Cascade)
 }
 
+model Contacts {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  message   String?  // Optional field
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
 model jackson_store {
   key        String    @id(map: "_jackson_store_key") @db.VarChar(1500)
   value      String

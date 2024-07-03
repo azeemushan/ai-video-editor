@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import Image from 'next/image';
-import Ed from '@/public/Ed.png'
+import EdRm from '@/public/ed_rm_bg.png'
 
 import Navbar from '../frontend/navbar';
 // 
@@ -14,12 +14,6 @@ interface FrontLayoutProps {
 
 const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     const { t } = useTranslation('common');
-    
-    
-    
-    
-
-    
    
   return (
     <>
@@ -47,6 +41,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
         <meta property="og:image" content="https://www.editur.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FEd.0494cc35.png&w=640&q=75" />
         <meta property="og:url" content="" />
         <meta property="og:locale" content="en" />
+
       </Head>
       
 
@@ -64,7 +59,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
         <div className="container mx-auto">
           <div className="mx-auto flex max-w-5xl flex-col justify-between gap-16 md:flex-row">
             <div className="flex flex-col gap-4">
-              <Image src={Ed} className="w-8" alt="" />
+              <Image src={EdRm} className="w-8" alt="" />
               <p className="text-sm text-neutral-400">{t('all-in-one-social-media-tool')}</p>
               <div className="flex items-center gap-4">
                 <a target="_blank" rel="noreferrer" href="#">

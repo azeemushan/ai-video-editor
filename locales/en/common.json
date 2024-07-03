@@ -344,5 +344,11 @@
   "upgrade-plan": "Upgrade Plan",
   "delete-success-message": "Deleted successfully",
   "success-message": "Subscription Upgraded Successfully",
-  "have-questions-or-need-support?": "Have questions or need support? Reach out to us at editor.ai and discover how we can help you transform long videos into captivating short clips using AI technology."
+  "have-questions-or-need-support?": "Have questions or need support? Reach out to us at editor.ai and discover how we can help you transform long videos into captivating short clips using AI technology.",
+  "phone-number": "Phone Number",
+  "your-message": "Your Message",
+  "send-message": "Send message",
+  "contacts": "Contacts",
+  "message": "Message"
+
 }

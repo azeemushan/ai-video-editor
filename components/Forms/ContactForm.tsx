@@ -2,6 +2,8 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useTranslation } from 'next-i18next';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 
 const ContactForm = () => {
@@ -20,12 +22,30 @@ const ContactForm = () => {
       message: Yup.string().required('Message is required'),
     }),
     onSubmit: values => {
-      console.log(values);
+
+      axios.post('/api/admin/contacts',{
+        name:values.username,
+        email:values.email,
+        phone:values.phoneNumber,
+        message:values.message,
+
+      }).then((res)=>{
+        console.log(res.data)
+        if(res.data.status === 'true'){
+          formik.resetForm();
+          toast.success(res.data.msg)
+
+        }else{
+          alert(res.data.msg)
+        }
+
+      })
+      
     },
   });
 
   return (
-    <section className="bg-white dark:bg-gray-900">
+    <section className="bg-white dark:bg-gray-900" id='contact_us'>
       <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
         <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">
         {t('contact-us')}
@@ -36,7 +56,7 @@ const ContactForm = () => {
         <form onSubmit={formik.handleSubmit} className="space-y-8">
           <div>
             <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Name
+              {t('name')}
             </label>
             <input
               type="text"
@@ -51,14 +71,15 @@ const ContactForm = () => {
           </div>
           <div>
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Your email
+            {t('email')}
+              
             </label>
             <input
               type="email"
               id="email"
               {...formik.getFieldProps('email')}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-              placeholder="name@flowbite.com"
+              placeholder="Email"
             />
             {formik.touched.email && formik.errors.email ? (
               <div className="text-red-500">{formik.errors.email}</div>
@@ -66,7 +87,7 @@ const ContactForm = () => {
           </div>
           <div>
             <label htmlFor="phoneNumber" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Phone Number
+              {t('phone-number')}
             </label>
             <input
               type="text"
@@ -81,7 +102,7 @@ const ContactForm = () => {
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
-              Your message
+              {t('your-message')}
             </label>
             <textarea
               id="message"
@@ -94,7 +115,7 @@ const ContactForm = () => {
             ) : null}
           </div>
           <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-            Send message
+            {t('send-message')}
           </button>
         </form>
       </div>

@@ -4,7 +4,7 @@ import env from './env';
 const app = {
   version: packageInfo.version,
   name: 'Editur.ai',
-  logoUrl: 'https://boxyhq.com/img/logo.png',
+  logoUrl: '/Ed.png',
   url: env.appUrl,
 };
 
