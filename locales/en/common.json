@@ -350,6 +350,56 @@
   "send-message": "Send message",
   "contacts": "Contacts",
   "message": "Message",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "terms_of_service": {
+    "title": "Terms of Service",
+    "last_updated": "Last updated: November 1, 2023",
+    "welcome": "Welcome to Editur.ai!",
+    "introduction": "These Terms of Service (\"Terms\") govern your use of Editur.ai, an online AI-powered video editor designed to turn long-form video into shorts (\"Service\"). By using our Service, you agree to be bound by these Terms. If you do not agree to these Terms, you may not use our Service.",
+    "acceptance": {
+      "heading": "1. Acceptance of Terms",
+      "content": "By accessing or using our Service, you confirm that you have read, understood, and agree to be bound by these Terms, including any future modifications. If you do not agree to these Terms, you may not use our Service."
+    },
+    "modification": {
+      "heading": "2. Modification of Terms",
+      "content": "We reserve the right to change or modify these Terms at any time. We will notify you of any changes by posting the new Terms on our website and updating the \"Last updated\" date at the top of this page. Your continued use of our Service after any changes constitutes your acceptance of the new Terms."
+    },
+    "use_of_service": {
+      "heading": "3. Use of Service",
+      "content": "You are solely responsible for your use of our Service and any content you create or share using our Service. You must comply with all applicable laws and regulations and agree not to use our Service for any unlawful or unauthorized purpose."
+    },
+    "user_content": {
+      "heading": "4. User Content",
+      "content": "You are responsible for ensuring that you have the necessary rights for any content you submit to our Service."
+    },
+    "prohibited_conduct": {
+      "heading": "5. Prohibited Conduct",
+      "content": "You agree not to engage in any of the following prohibited activities: (a) copying, distributing, or disclosing any part of our Service in any medium; (b) using our Service to harass, abuse, or harm another person; (c) interfering with the proper working of our Service; or (d) bypassing the measures we may use to prevent or restrict access to our Service."
+    },
+    "termination": {
+      "heading": "6. Termination",
+      "content": "We reserve the right to terminate or suspend your access to our Service at any time, for any reason, without notice or liability."
+    },
+    "disclaimer": {
+      "heading": "7. Disclaimer of Warranties",
+      "content": "Our Service is provided \"as is\" and \"as available\" without any warranties of any kind, either express or implied. We disclaim all warranties, express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, and non-infringement."
+    },
+    "liability": {
+      "heading": "8. Limitation of Liability",
+      "content": "We shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses, resulting from (a) your use or inability to use our Service; (b) any unauthorized access to or use of our servers and/or any personal information stored therein."
+    },
+    "governing_law": {
+      "heading": "9. Governing Law",
+      "content": "These Terms are governed by and construed in accordance with the laws applicable in your region, without regard to its conflict of law principles."
+    },
+    "contact_information": {
+      "heading": "10. Contact Information",
+      "content": "For any questions about these Terms, please contact us via the contact form on our website."
+    },
+    "entire_agreement": {
+      "heading": "11. Entire Agreement",
+      "content": "These Terms constitute the entire agreement between you and us regarding the use of our Service, superseding any prior agreements regarding the use of our Service."
+    }
+  }
 
 }

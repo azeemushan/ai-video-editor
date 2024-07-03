@@ -19,6 +19,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
     <>
        <Head>
         <title>{t('homepage-title-ai')}</title>
+        
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="csrf-token" content="YsovHPNZ2tnAHTMiLX5SpDpdsdZOU7QYLpIKEN3r" />
@@ -125,7 +126,7 @@ const  FrontLayout =({ children }: FrontLayoutProps)  =>{
                 <div className="flex flex-column flex-wrap gap-4 md:flex-col">
                   <Link href="#" className="text-sm text-neutral-400">{t('blog')}</Link>
                   <Link href="#" className="text-sm text-neutral-400">{t('pricing')}</Link>
-                  <Link href="#" className="text-sm text-neutral-400">{t('terms-of-service')}</Link>
+                  <Link href="/terms-of-services" className="text-sm text-neutral-400">{t('terms-of-service')}</Link>
                   <Link href="/" className="text-sm text-neutral-400">{t('privacy-policy')}</Link>
                   <Link href="/" className="text-sm text-neutral-400">{t('contact-us')}</Link>
                 </div>
