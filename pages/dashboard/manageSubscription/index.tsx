@@ -1,10 +1,9 @@
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { GetServerSidePropsContext } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
 import axios from 'axios';
-import env from '@/lib/env';
+
 import Link from 'next/link';
 import ConfirmationModal from '@/components/confirmation'; // Adjust the import path as per your project structure
 
@@ -133,22 +132,6 @@ function ManageSubscription() {
   );
 }
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  if (env.hideLandingPage) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: true,
-      },
-    };
-  }
-  const { locale } = context;
 
-  return {
-    props: {
-      ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
-    },
-  };
-};
 
 export default ManageSubscription;
