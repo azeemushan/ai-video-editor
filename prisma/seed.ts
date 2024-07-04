@@ -237,6 +237,12 @@ async function seedSubscriptionPackages() {
       active: true,
     });
 
+    // Check if the product already has two prices
+    if (existingPrices.data.length >= 2) {
+      console.log(`Product ${product.name} already has two prices. Skipping price creation.`);
+      continue;
+    }
+
     let priceAmount = pkg.price * 100; // Stripe expects the amount in cents
     if (pkg.sub_dur_type.toLowerCase() === 'yearly') {
       priceAmount *= 12; // Multiply by 12 for yearly subscription
@@ -272,8 +278,9 @@ async function seedSubscriptionPackages() {
     console.log('Stripe payment link and price ID created and updated', pkg);
   }
 
-  console.log('Stripe products, prices, and payment links created');
+
 }
+
 
 
 

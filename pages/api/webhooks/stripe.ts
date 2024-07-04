@@ -28,6 +28,7 @@ const relevantEvents: Stripe.Event.Type[] = [
   'customer.subscription.deleted',
   'checkout.session.completed', // Added the checkout session completed event
   'charge.succeeded',
+  'invoice.payment_failed',
 ];
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
@@ -62,6 +63,9 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         case 'checkout.session.completed':
           await handleCheckoutSessionCompleted(event);
           break;
+          case 'invoice.payment_failed':
+            await handleInvoicePaymentFailed(event);
+            break;
           
         default:
           throw new Error('Unhandled relevant event!');
@@ -182,4 +186,17 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   // ...
 }
 
+async function handleInvoicePaymentFailed(event: Stripe.Event) {
+  const { subscription } = event.data.object as Stripe.Invoice;
 
+  // Delete the subscription from Stripe
+  if (subscription) {
+    
+     await stripe.subscriptions.cancel(
+      subscription as string
+    );
+    console.log(`Subscription ${subscription} deleted due to payment failure.`);
+  } else {
+    console.error('No subscription found in the failed invoice event.');
+  }
+}
