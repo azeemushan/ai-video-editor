@@ -274,11 +274,8 @@ async function seedSubscriptionPackages() {
         stripe_priceId: stripePrice.id, // Add the stripe_priceId here
       },
     });
-
     console.log('Stripe payment link and price ID created and updated', pkg);
   }
-
-
 }
 
 
