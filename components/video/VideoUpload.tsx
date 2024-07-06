@@ -11,14 +11,16 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import ReactPlayer from 'react-player';
 import Link from 'next/link';
-import {  Loading } from '@/components/shared';
+import { Loading } from '@/components/shared';
 
 const VideoUpload: React.FC = () => {
   const router = useRouter();
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation('common');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [video, setVideo] = useState<any[]>([]);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -28,7 +30,6 @@ const VideoUpload: React.FC = () => {
   };
 
   const handleConfirm = () => {
-    // Perform your confirm action here
     setIsModalOpen(false);
   };
 
@@ -45,31 +46,36 @@ const VideoUpload: React.FC = () => {
     }),
     onSubmit: async (values) => {
       const { link } = values;
-      setLoading(true)
+      setLoading(true);
 
-      axios
-        .post('/api/video/UploadVideo', {
+      try {
+        const response = await axios.post('/api/video/UploadVideo', {
           origionalVideoLink: link,
-        })
-        .then(function (response: any) {
-          
-          if(response.data.data ==="payment"){
-            
-            router.push(`/pricing`);
-            return false
-          }
-          
-          const { id } = response.data.data;
-
-          router.push(`/videos/${id}`);
-        })
-        .catch(function (error) {
-          console.log(error);
         });
+
+        setLoading(false);
+
+        if (response.data.data === 'payment') {
+          router.push(`/pricing`);
+          return;
+        }
+
+        const { id } = response.data.data;
+        router.push(`/videos/${id}`);
+      } catch (error) {
+        setLoading(false);
+        console.error('Error uploading video:', error);
+        setAlertMessage('Video length exceeds the maximum allowed length for your subscription package!'); // Set error message for alert
+        setTimeout(() => {
+          setAlertMessage(null); // Clear alert message after 5 seconds
+          window.location.reload(); // Reload the page after clearing the message
+        }, 8000); // 8 seconds
+      }
 
       formik.resetForm();
     },
   });
+
   useEffect(() => {
     axios.get('/api/video/UploadVideo').then((res) => {
       console.log(res.data.data);
@@ -77,46 +83,45 @@ const VideoUpload: React.FC = () => {
     });
   }, []);
 
-  if(loading){
-    return <Loading />
-  }
-
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-  <div
-    onClick={handleOpenModal}
-    className="bg-purple-200 flex flex-col items-center py-20 justify-center rounded-lg cursor-pointer aspect-w-1 aspect-h-1"
-  >
-    <FaPlus className="text-purple-500 text-xl md:text-2xl lg:text-3xl" />
-    
-  </div>
-  {video.map((clip, index) =>
-    clip.conVideoSrc ? (
-      <div
-        key={index}
-        className="video_par flex flex-col w-full rounded-lg overflow-hidden aspect-w-1 aspect-h-1"
-      >
-        <Link href={`/videos/moments/${clip.id}`} passHref>
-          <ReactPlayer
-            url={clip.conVideoSrc}
-            width="100%"
-            height="100%"
-            className="flex-1"
-          />
-        </Link>
-        <div className="mt-3 px-2 text-xs font-bold text-center sm:text-sm">
-          <p className="whitespace-normal">{clip.conVideoTitle}</p>
+      {/* Alert Message Component */}
+      {alertMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"  style={{ zIndex: 110 }}>
+        <div className="bg-white text-green-800 text-lg font-normal px-4 py-2 rounded-md shadow-lg">
+        {alertMessage}
         </div>
       </div>
-    ) : null
-  )}
-</div>
+      )}
 
-
-
-
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          onClick={handleOpenModal}
+          className="bg-purple-200 flex flex-col items-center py-20 justify-center rounded-lg cursor-pointer aspect-w-1 aspect-h-1"
+        >
+          <FaPlus className="text-purple-500 text-xl md:text-2xl lg:text-3xl" />
+        </div>
+        {video.map((clip, index) =>
+          clip.conVideoSrc ? (
+            <div
+              key={index}
+              className="video_par flex flex-col w-full rounded-lg overflow-hidden aspect-w-1 aspect-h-1"
+            >
+              <Link href={`/videos/moments/${clip.id}`} passHref>
+                <ReactPlayer
+                  url={clip.conVideoSrc}
+                  width="100%"
+                  height="100%"
+                  className="flex-1"
+                />
+              </Link>
+              <div className="mt-3 px-2 text-xs font-bold text-center sm:text-sm">
+                <p className="whitespace-normal">{clip.conVideoTitle}</p>
+              </div>
+            </div>
+          ) : null
+        )}
+      </div>
 
       <Modal
         isOpen={isModalOpen}
@@ -124,7 +129,6 @@ const VideoUpload: React.FC = () => {
         title={t('add-video')}
         onConfirm={handleConfirm}
       >
-        {/* children content will be goes here */}
         <form onSubmit={formik.handleSubmit}>
           <div className="flex items-center gap-x-3 flex-wrap">
             <div className="space-y-3 flex-1">
@@ -137,16 +141,21 @@ const VideoUpload: React.FC = () => {
                 error={formik.touched.link ? formik.errors.link : undefined}
                 onChange={formik.handleChange}
               />
+              {/* Display validation error message */}
+              {formik.touched.link && formik.errors.link && (
+                <div className="text-red-500 text-xs mt-1">{formik.errors.link}</div>
+              )}
             </div>
             <div className="mt-9 space-y-3">
               <Button
-                type="submit"
+                type="button"
                 color="primary"
-                loading={formik.isSubmitting}
-                active={formik.dirty}
+                loading={loading}
+                active={!loading}
                 fullWidth
                 size="md"
                 className="text-white"
+                onClick={() => formik.handleSubmit()}
               >
                 {t('import-statement')}
               </Button>

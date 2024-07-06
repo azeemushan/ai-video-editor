@@ -196,7 +196,7 @@ const Pricing: NextPageWithLayout = () => {
                 {currentSubscription &&
                   currentSubscription.stripe_priceId ===
                     plan.stripe_priceId && (
-                    <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 ">
+                      <span className="bg-[#333030] text-white text-base font-medium absolute -top-[17px] left-[86px] px-5 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
                       {t('current-plan')}
                     </span>
                   )}
