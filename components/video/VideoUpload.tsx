@@ -19,7 +19,7 @@ const VideoUpload: React.FC = () => {
   const { t } = useTranslation('common');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [video, setVideo] = useState<any[]>([]);
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [maxVideoLengthFromDB, setMaxVideoLengthFromDB] = useState<string | null>(null); // Add state to hold max video length
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -60,40 +60,29 @@ const VideoUpload: React.FC = () => {
           return;
         }
 
-        const { id } = response.data.data;
+        const { id, maxVideoLengthFromDB } = response.data.data;
+        setMaxVideoLengthFromDB(maxVideoLengthFromDB); // Set the max video length from response
         router.push(`/videos/${id}`);
       } catch (error) {
         setLoading(false);
         console.error('Error uploading video:', error);
-        setAlertMessage('Video length exceeds the maximum allowed length for your subscription package!'); // Set error message for alert
-        setTimeout(() => {
-          setAlertMessage(null); // Clear alert message after 5 seconds
-          window.location.reload(); // Reload the page after clearing the message
-        }, 8000); // 8 seconds
+        setMaxVideoLengthFromDB(null); // Clear max video length on error
+        formik.setFieldError('link', `You cannot upload video greater than ${maxVideoLengthFromDB}`);
       }
-
-      formik.resetForm();
     },
   });
 
   useEffect(() => {
     axios.get('/api/video/UploadVideo').then((res) => {
-      console.log(res.data.data);
       setVideo(res.data.data);
+      setMaxVideoLengthFromDB(res.data.maxVideoLengthFromDB); // Set the max video length from response
+    }).catch(error => {
+      console.error('Error fetching video data:', error);
     });
   }, []);
 
   return (
     <div>
-      {/* Alert Message Component */}
-      {alertMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"  style={{ zIndex: 110 }}>
-        <div className="bg-white text-green-800 text-lg font-normal px-4 py-2 rounded-md shadow-lg">
-        {alertMessage}
-        </div>
-      </div>
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
           onClick={handleOpenModal}
@@ -142,20 +131,19 @@ const VideoUpload: React.FC = () => {
                 onChange={formik.handleChange}
               />
               {/* Display validation error message */}
-              {formik.touched.link && formik.errors.link && (
+              {/* {formik.touched.link && formik.errors.link && (
                 <div className="text-red-500 text-xs mt-1">{formik.errors.link}</div>
-              )}
+              )} */}
             </div>
             <div className="mt-9 space-y-3">
               <Button
-                type="button"
+                type="submit" 
                 color="primary"
                 loading={loading}
                 active={!loading}
                 fullWidth
                 size="md"
                 className="text-white"
-                onClick={() => formik.handleSubmit()}
               >
                 {t('import-statement')}
               </Button>

@@ -212,11 +212,32 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const videos = await getAllVideos({ userId: session?.user.id });
-    res.status(200).json({ status: 'true', message: 'get all videos', data: videos });
+
+    const subscription = await prisma.subscriptions.findFirst({
+      where: {
+        user_id: session?.user.id,
+        status: true,
+      },
+      include: {
+        subscriptionPackage: true,
+      },
+    });
+
+    const maxVideoLengthFromDB = subscription?.subscriptionPackage?.max_length_video; // Get the max video length from the subscription package
+
+
+    // Include maxVideoLengthFromDB in the response
+    res.status(200).json({
+      status: 'true',
+      message: 'get all videos',
+      data: videos,
+      maxVideoLengthFromDB: maxVideoLengthFromDB // Add this line to include the value in the response
+    });
   } catch (error) {
-    res.json({ status: 'false', message: 'some thing went wrong', data: {} });
+    res.json({ status: 'false', message: 'something went wrong', data: {} });
   }
 };
+
 
 // Helper function to convert time string (HH:MM:SS) to seconds
 function timeStringToSeconds(timeString: string): number {
