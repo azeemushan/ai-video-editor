@@ -50,7 +50,7 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                   />
                 </button>
               </div>
-              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-black px-6 pb-4">
+              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-100 dark:bg-black px-6 pb-4">
                 <Brand />
                 {/* mobile */}
                 <div className="side_nav_links">
@@ -117,7 +117,7 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                           <li>
                             <Link href="/dashboard/manageSubscription">
                               <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <MdManageHistory className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <MdManageHistory className="w-8 h-8 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                 <span className="ms-3">{t('manage-subscription-card')}</span>
                               </div>
                             </Link>
@@ -198,7 +198,7 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
       )}
 
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 ps-6">
+        <div className="flex grow flex-col bg-gray-100 gap-y-5 overflow-y-auto border-r border-gray-200">
           <Brand />
           {/* desktop */}
           <div className="side_nav_links">

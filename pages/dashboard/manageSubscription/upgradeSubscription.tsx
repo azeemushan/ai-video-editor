@@ -106,7 +106,7 @@ function ManageSubscription() {
       <div className="max-w-5xl mx-auto px-3 text-center">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
           {subPkges.map((pkg: any) => (
-            <section key={pkg.id} className="flex-1 p-12 bg-white shadow-xl rounded-2xl">
+            <section key={pkg.id} className="flex-1 p-12 bg-white shadow-xl rounded-2xl transition-transform hover:scale-105">
               <div className="flex-col flex justify-center items-center text-center">
                 <h2 className="text-2xl font-semibold mb-4">{pkg.subscription_type} ({pkg.sub_dur_type})</h2>
                 <h3 className="text-4xl md:text-5xl font-semibold mt-8 flex items-baseline">
@@ -122,7 +122,7 @@ function ManageSubscription() {
                       strokeWidth="1.5"
                       stroke="currentColor"
                       aria-hidden="true"
-                      className="w-5 h-5 shrink-0"
+                      className="w-5 h-5 shrink-0 text-green-500"
                     >
                       <path
                         strokeLinecap="round"
@@ -140,7 +140,7 @@ function ManageSubscription() {
                       strokeWidth="1.5"
                       stroke="currentColor"
                       aria-hidden="true"
-                      className="w-5 h-5 shrink-0"
+                      className="w-5 h-5 shrink-0 text-green-500"
                     >
                       <path
                         strokeLinecap="round"
@@ -158,7 +158,7 @@ function ManageSubscription() {
                       strokeWidth="1.5"
                       stroke="currentColor"
                       aria-hidden="true"
-                      className="w-5 h-5 shrink-0"
+                      className="w-5 h-5 shrink-0 text-green-500"
                     >
                       <path
                         strokeLinecap="round"
@@ -170,7 +170,7 @@ function ManageSubscription() {
                   </li>
                 </ul>
                 <button
-                  className="mt-8 w-full px-6 py-3 h-12 bg-green-500 hover:bg-green-700 text-white font-bold rounded-xl relative flex items-center gap-2 justify-center border transition-none"
+                  className="mt-8 w-full px-6 py-3 h-12 bg-green-500 hover:bg-green-700 text-white font-bold rounded-xl relative flex items-center gap-2 justify-center border transition-all duration-300"
                   onClick={() => handleUpgrade(pkg.stripe_priceId)}
                 >
                   <span className="text-sm font-semibold whitespace-nowrap">{t('upgrade-plan')}</span>
@@ -181,7 +181,7 @@ function ManageSubscription() {
         </div>
         <p className="text-sm font-normal mt-8 text-slate-700">
           {t('need-more')}{' '}
-          <a className="text-slate-500" href="https://discord.gg/KcAcHdrSQU">
+          <a className="text-slate-500 hover:underline" href="https://discord.gg/KcAcHdrSQU">
             {t('lets-talk')}
           </a>
         </p>
@@ -215,9 +215,6 @@ function ManageSubscription() {
           </div>
         </div>
       )}
-
-
-
     </div>
   );
 }
