@@ -2,6 +2,10 @@ import { useTranslation } from 'next-i18next';
 import React, { useState, useEffect } from 'react';
 import type { NextPageWithLayout } from 'types';
 import toast from 'react-hot-toast';
+import env from '@/lib/env';
+import { GetServerSidePropsContext } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
 
 const ContactUsTable: NextPageWithLayout = () => {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -93,6 +97,26 @@ const ContactUsTable: NextPageWithLayout = () => {
       </table>
     </div>
   );
+};
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Redirect to login page if landing page is disabled
+  if (env.hideLandingPage) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: true,
+      },
+    };
+  }
+
+  const { locale } = context;
+
+  return {
+    props: {
+      ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
+    },
+  };
 };
 
 export default ContactUsTable;

@@ -5,6 +5,10 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import Link from 'next/link';
 import ConfirmationModal from '@/components/confirmation'; // Adjust the import path as per your project structure
+import { GetServerSidePropsContext } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import env from '@/lib/env';
+
 
 function ManageSubscription() {
   const { t } = useTranslation('common');
@@ -137,5 +141,24 @@ function ManageSubscription() {
     </div>
   );
 }
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Redirect to login page if landing page is disabled
+  if (env.hideLandingPage) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: true,
+      },
+    };
+  }
+
+  const { locale } = context;
+
+  return {
+    props: {
+      ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
+    },
+  };
+};
 
 export default ManageSubscription;
