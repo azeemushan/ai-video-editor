@@ -62,7 +62,7 @@ const EditSubscription: NextPageWithLayout = () => {
 
   return (
     <form className="max-w-md mx-auto border-spacing-1" onSubmit={handleSubmit}>
-      <h1 className=" font-bold text-4xl">{t('edit-subscription')}</h1>
+      <h1 className=" font-bold text-4xl mb-8 mt-8">{t('edit-subscription')}</h1>
       <div className="relative z-0 w-full mb-5 group">
         <input
           type="text"

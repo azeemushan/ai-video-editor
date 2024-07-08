@@ -35,6 +35,14 @@ const VideoUpload: React.FC = () => {
 
   const youtubeRegex = /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
 
+  const formatMaxVideoLength = (length: string) => {
+    const [hours, minutes, seconds] = length.split(':').map(Number);
+    if (hours > 0) {
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+    }
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+  };
+
   const formik = useFormik({
     initialValues: {
       link: '',
@@ -67,7 +75,7 @@ const VideoUpload: React.FC = () => {
         setLoading(false);
         console.error('Error uploading video:', error);
         setMaxVideoLengthFromDB(null); // Clear max video length on error
-        formik.setFieldError('link', `You cannot upload video greater than ${maxVideoLengthFromDB}`);
+        formik.setFieldError('link', `You cannot upload video greater than ${formatMaxVideoLength(maxVideoLengthFromDB || '00:00:00')}`);
       }
     },
   });
