@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { Loading } from '@/components/shared';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 
 const Pricing: NextPageWithLayout = () => {
@@ -133,7 +134,19 @@ const Pricing: NextPageWithLayout = () => {
         Subscription_type: subscriptionType,
       })
       .then((res) => {
-        router.push(res.data.data.url);
+        console.log(res.data.status)
+
+        if( res.data.status === 'true'){
+          router.push(res.data.data.url);
+        }
+        else if (res.data.status === 'subscription exist'){
+          
+          
+          toast.error(res.data.message);
+          router.push('/dashboard/manageSubscription')
+
+        }
+        
       });
   };
   
