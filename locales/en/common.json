@@ -344,6 +344,8 @@
   "upgrade-plan": "Upgrade Plan",
   "delete-success-message": "Deleted successfully",
   "success-message": "Subscription Upgraded Successfully",
+  "updated-success-message": "Subscription Updated Successfully",
+  "are-you-want-to-delete": "Are you sure you want to delete?",
   "have-questions-or-need-support?": "Have questions or need support? Reach out to us at editor.ai and discover how we can help you transform long videos into captivating short clips using AI technology.",
   "phone-number": "Phone Number",
   "your-message": "Your Message",
