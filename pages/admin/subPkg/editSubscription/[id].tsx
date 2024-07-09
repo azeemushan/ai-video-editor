@@ -16,7 +16,8 @@ const EditSubscription: NextPageWithLayout = () => {
   const [formData, setFormData] = useState({
     price: '',
     uploadVideoLimit: '',
-    generateClips: ''
+    generateClips: '',
+    stripe_priceId: ''
   });
 
   const [loading, setLoading] = useState(false); // State to manage loading state
@@ -32,7 +33,8 @@ const EditSubscription: NextPageWithLayout = () => {
           setFormData({
             price: response.data.price,
             uploadVideoLimit: response.data.upload_video_limit,
-            generateClips: response.data.generate_clips
+            generateClips: response.data.generate_clips,
+            stripe_priceId: response.data.stripe_priceId,
           });
         })
         .catch(error => {
@@ -87,6 +89,7 @@ const EditSubscription: NextPageWithLayout = () => {
       <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">{t('edit-subscription')}</h1>
       <form onSubmit={handleSubmit}>
         <div className="relative z-0 w-full mb-6 group">
+        <input type="hidden" name="stripe_priceId" value={formData.stripe_priceId} />
           <input
             type="text"
             name="price"
