@@ -177,11 +177,7 @@ const Pricing: NextPageWithLayout = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (router.query.from === 'upload') {
-      toast.error('You need to buy a subscription to upload videos.');
-    }
-  }, [router.query]);
+
 
   if (loading) {
     return <Loading />;

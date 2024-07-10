@@ -11,7 +11,9 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import ReactPlayer from 'react-player';
 import Link from 'next/link';
-import { Loading } from '@/components/shared';
+// import { Loading } from '@/components/shared';
+import toast from 'react-hot-toast';
+
 
 const VideoUpload: React.FC = () => {
   const router = useRouter();
@@ -36,7 +38,7 @@ const VideoUpload: React.FC = () => {
   const youtubeRegex = /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
 
   const formatMaxVideoLength = (length: string) => {
-    const [hours, minutes, seconds] = length.split(':').map(Number);
+    const [hours, minutes] = length.split(':').map(Number);
     if (hours > 0) {
       return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
     }
@@ -64,7 +66,8 @@ const VideoUpload: React.FC = () => {
         setLoading(false);
 
         if (response.data.data === 'payment') {
-          router.push(`/pricing?from=upload`);
+          toast.error('You need to buy a subscription to upload videos.')
+          router.push(`/pricing`);
           return;
         }
 

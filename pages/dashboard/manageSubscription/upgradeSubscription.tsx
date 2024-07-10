@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'next-i18next';
 import { useSession } from 'next-auth/react';
@@ -6,6 +6,8 @@ import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import ConfirmationModal from '@/components/confirmation'; // Adjust the import path as per your project structure
 import env from '@/lib/env';
+import { Loading } from '@/components/shared';
+import toast from 'react-hot-toast';
 
 function ManageSubscription() {
   const { t } = useTranslation('common');
@@ -16,55 +18,55 @@ function ManageSubscription() {
   const [showUpgradeConfirm, setShowUpgradeConfirm] = useState(false); // State to manage modal visibility
   const [selectedPriceId, setSelectedPriceId] = useState<string>('');
   const [loading, setLoading] = useState(false); // State to manage loading state
-  const [showSuccess, setShowSuccess] = useState(false); // State to manage success popup
+  
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await axios.post('/api/subscriptionPackages/upSubPkg', {
+        stripe_priceId: currentSubscription?.stripe_priceId,
+      });
+      const { data } = res.data;
+      setSubPkges(data);
+    } catch (error) {
+      console.error('Error fetching subscription packages:', error);
+    }
+  }, [currentSubscription?.stripe_priceId, setSubPkges]);
+  const fetchSubscription = useCallback(async () => {
+    try {
+      const res = await axios.post('/api/subscriptions/subscription', {
+        userId: id,
+        status: true,
+      });
+      const activeSubscription = res.data.data;
+      setCurrentSubscription(activeSubscription);
+    } catch (error) {
+      console.error('Error fetching current subscription:', error);
+    }
+  }, [id, setCurrentSubscription]);
 
   useEffect(() => {
     if (id) {
-      const fetchSubscription = async () => {
-        try {
-          const res = await axios.post('/api/subscriptions/subscription', {
-            userId: id,
-            status: true,
-          });
-          const activeSubscription = res.data.data;
-          setCurrentSubscription(activeSubscription);
-        } catch (error) {
-          console.error('Error fetching current subscription:', error);
-        }
-      };
+
       fetchSubscription();
     }
-  }, [id]);
+  }, [fetchSubscription, id]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.post('/api/subscriptionPackages/upSubPkg', {
-          stripe_priceId: currentSubscription?.stripe_priceId,
-        });
-        const { data } = res.data;
-        setSubPkges(data);
-      } catch (error) {
-        console.error('Error fetching subscription packages:', error);
-      }
-    };
+    
     if (currentSubscription?.stripe_priceId) {
       fetchData();
     }
-  }, [currentSubscription]);
+  }, [currentSubscription, fetchData]);
 
   // Function to handle upgrade request
   const handleUpgrade = async (newPriceId: string) => {
     try {
-      setLoading(true); // Show loader
+      
       setSelectedPriceId(newPriceId);
       setShowUpgradeConfirm(true); // Show confirmation modal
     } catch (error) {
       console.error('Error initiating upgrade:', error);
       alert('Failed to initiate upgrade');
-    } finally {
-      setLoading(false); // Hide loader
-    }
+    } 
   };
 
   // Function to handle upgrade confirmation
@@ -79,8 +81,13 @@ function ManageSubscription() {
       });
 
       if (upgradeRes.data.status === "true") {
-        setShowSuccess(true); // Show success popup
-        setTimeout(() => setShowSuccess(false), 4000); // Hide success popup after 4 seconds
+        setCurrentSubscription(upgradeRes.data.data);
+        fetchData()
+        setLoading(false)
+
+        toast.success('Subscription Upgraded successfully');
+        
+        
       } else {
         alert('Something went wrong while upgrading.');
       }
@@ -99,6 +106,10 @@ function ManageSubscription() {
       setShowUpgradeConfirm(false); // Close confirmation modal
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-3 text-center text-slate-950">
@@ -207,14 +218,7 @@ function ManageSubscription() {
         </div>
       )}
 
-      {/* Success Popup */}
-      {showSuccess && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-white text-green-800 text-lg font-semibold px-4 py-2 rounded-md shadow-lg">
-          {t('success-message')}
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }

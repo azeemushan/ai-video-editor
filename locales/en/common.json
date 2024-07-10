@@ -328,7 +328,7 @@
   "sub-pkg":"Subscription Packages",
   "no-hidden-fee":"No hidden fees. Cancel anytime.",
   "pay-success":"Payment Successful!",
-  "pay-complete":"Thank you for your payment. Your transaction has been completed.",
+  "pay-complete":"Thank you for your payment. Your transaction has been completed. Now you can upload links",
   "pay-fail": "Payment Failed!",
   "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again.",
   "admin-dashboard": "Admin Dashboard",
@@ -405,6 +405,6 @@
   },
   "no-subscription": "You have no current Subscription!",
   "subscription-cancelled": "Subscription Cancelled",
-  "your-subscription-will-end-on": "Your Subscription will end on"
+  "your-subscription-will-end-on": "You can use the existing subscription till"
 
 }

@@ -17,8 +17,7 @@ function ManageSubscription() {
   const id = data?.user?.id;
   const [loading, setLoading] = useState(false); // State to manage loading state
   const [showSuccess, setShowSuccess] = useState(false); // State to manage success popup
-  const [cancellationDate, setCancellationDate] = useState<string | null>(null); // State to store cancellation date
-  const [isCancelled, setIsCancelled] = useState(false); // State to track if subscription is cancelled
+
 
   useEffect(() => {
     if (id) {
@@ -33,11 +32,7 @@ function ManageSubscription() {
 
 
           // Set the cancellation date from the subscription data
-          if (activeSubscription && activeSubscription.end_date) {
-            setCancellationDate(activeSubscription.end_date);
-          } else {
-            console.log('No end_date found in subscription');
-          }
+          
         } catch (error) {
           console.error('Error fetching current subscription:', error);
         }
@@ -55,8 +50,8 @@ function ManageSubscription() {
       if (response.status === 200) {
         setShowSuccess(true); // Show success popup
         setTimeout(() => setShowSuccess(false), 4000); // Hide success popup after 4 seconds
-        setCancellationDate(currentSubscription.end_date); // Set the cancellation date
-        setIsCancelled(true); // Set cancellation status to true
+        
+        
       }
     } catch (error) {
       console.error('Error cancelling subscription:', error);
@@ -97,13 +92,18 @@ function ManageSubscription() {
     );
   };
 
+  useEffect(()=>{
+console.log(currentSubscription)
+
+  },[currentSubscription])
+
   return (
     <div className="container mx-auto pt-[50px] w-[43.5rem]">
-      {isCancelled && cancellationDate && (
+      { currentSubscription && currentSubscription.cancelAt && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
           <p className="font-bold">{t('subscription-cancelled')}</p>
           <p>
-            {t('your-subscription-will-end-on')}: {new Date(cancellationDate).toLocaleDateString()}
+            {t('your-subscription-will-end-on')}: {new Date(currentSubscription.cancelAt as any).toLocaleDateString()}
           </p>
         </div>
       )}
@@ -120,14 +120,14 @@ function ManageSubscription() {
             <button 
               onClick={() => setShowDeleteConfirm(true)} 
               className="pr-[8rem] pl-[8rem] py-2.5 px-5 me-2 mb-2 text-sm font-bold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              disabled={!cancellationDate || isCancelled} // Disable if already cancelled
+              disabled={currentSubscription && currentSubscription.cancelAt} // Disable if already cancelled
             >
               {t('cancel')}
             </button>
             <Link href="/dashboard/manageSubscription/upgradeSubscription">
               <button 
                 className="pr-[8rem] pl-[8rem] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"
-                disabled={!cancellationDate || isCancelled} // Disable if already cancelled
+                disabled={currentSubscription && currentSubscription.cancelAt} // Disable if already cancelled
               >
                 {t('upgrade')}
               </button>
