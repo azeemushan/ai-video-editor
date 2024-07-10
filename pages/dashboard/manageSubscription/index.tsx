@@ -1,6 +1,6 @@
 // Updated ManageSubscription component with improved design
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -8,6 +8,8 @@ import ConfirmationModal from '@/components/confirmation'; // Adjust the import 
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import env from '@/lib/env';
+import toast from 'react-hot-toast';
+
 
 function ManageSubscription() {
   const { t } = useTranslation('common');
@@ -16,30 +18,26 @@ function ManageSubscription() {
   const { data } = useSession();
   const id = data?.user?.id;
   const [loading, setLoading] = useState(false); // State to manage loading state
-  const [showSuccess, setShowSuccess] = useState(false); // State to manage success popup
+  const fetchSubscription = useCallback(async () => {
+    try {
+      const res = await axios.post('/api/subscriptions/subscription', {
+        userId: id,
+        status: true,
+      });
+      const activeSubscription = res.data.data;
+      setCurrentSubscription(activeSubscription);
+    } catch (error) {
+      console.error('Error fetching current subscription:', error);
+    }
+  }, [id, setCurrentSubscription]);
 
 
   useEffect(() => {
     if (id) {
-      const fetchSubscription = async () => {
-        try {
-          const res = await axios.post('/api/subscriptions/subscription', {
-            userId: id,
-            status: true,
-          });
-          const activeSubscription = res.data.data; // assuming the first one is the active subscription
-          setCurrentSubscription(activeSubscription);
-
-
-          // Set the cancellation date from the subscription data
-          
-        } catch (error) {
-          console.error('Error fetching current subscription:', error);
-        }
-      };
+      
       fetchSubscription();
     }
-  }, [id]);
+  }, [fetchSubscription, id]);
 
   const handleDelete = async () => {
     try {
@@ -47,9 +45,11 @@ function ManageSubscription() {
       const response = await axios.post('/api/subscriptions/cancel', {
         subscriptionId: currentSubscription.stripe_subscriptionId,
       });
-      if (response.status === 200) {
-        setShowSuccess(true); // Show success popup
-        setTimeout(() => setShowSuccess(false), 4000); // Hide success popup after 4 seconds
+      if (response.data.status === 'true') {
+        
+        setCurrentSubscription(response.data.data)
+        toast.success('Subscription Cancelled successfully');
+        
         
         
       }
@@ -165,14 +165,8 @@ console.log(currentSubscription)
         </div>
       )}
 
-      {/* Success message */}
-      {showSuccess && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-white text-green-800 text-lg font-semibold px-4 py-2 rounded-md shadow-lg">
-            {t('subscription-cancelled')}!
-          </div>
-        </div>
-      )}
+      
+      
     </div>
   );
 }
