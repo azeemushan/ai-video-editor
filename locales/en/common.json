@@ -78,7 +78,7 @@
   "frequently-asked": "Frequently asked questions",
   "pricing": "Pricing",
   "buy-now": "Buy now",
-  "generate-clips": "generate-clips",
+  "generate-clips": "Generate clips",
   "password-reset-link-sent": "Password reset link sent",
   "email-password-reset-link": "Email Password Reset Link",
   "reset-password": "Reset Password",
@@ -328,7 +328,7 @@
   "sub-pkg":"Subscription Packages",
   "no-hidden-fee":"No hidden fees. Cancel anytime.",
   "pay-success":"Payment Successful!",
-  "pay-complete":"Thank you for your payment. Your transaction has been completed.",
+  "pay-complete":"Thank you for your payment. Your transaction has been completed. Now you can upload links",
   "pay-fail": "Payment Failed!",
   "pay-fail-message": "Unfortunately, your transaction could not be completed. Please try again.",
   "admin-dashboard": "Admin Dashboard",
@@ -344,6 +344,8 @@
   "upgrade-plan": "Upgrade Plan",
   "delete-success-message": "Deleted successfully",
   "success-message": "Subscription Upgraded Successfully",
+  "updated-success-message": "Subscription Updated Successfully",
+  "are-you-want-to-delete": "Are you sure you want to delete?",
   "have-questions-or-need-support?": "Have questions or need support? Reach out to us at editor.ai and discover how we can help you transform long videos into captivating short clips using AI technology.",
   "phone-number": "Phone Number",
   "your-message": "Your Message",
@@ -400,6 +402,9 @@
       "heading": "11. Entire Agreement",
       "content": "These Terms constitute the entire agreement between you and us regarding the use of our Service, superseding any prior agreements regarding the use of our Service."
     }
-  }
+  },
+  "no-subscription": "You have no current Subscription!",
+  "subscription-cancelled": "Subscription Cancelled",
+  "your-subscription-will-end-on": "You can use the existing subscription till"
 
 }

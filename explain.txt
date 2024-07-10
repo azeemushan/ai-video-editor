@@ -1,47 +1,16 @@
-try {
-    // Retrieve the current subscription
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+https://stackoverflow.com/questions/78192732/i-want-to-update-the-price-for-a-product-on-stripe
+https://chatgpt.com/c/5355f088-0d92-448a-92ee-1b127684e62b
+https://chatgpt.com/c/5355f088-0d92-448a-92ee-1b127684e62b
 
-    // Retrieve the new price data
-    const newPriceData = await stripe.prices.retrieve(newPriceId);
-    const newPrice = newPriceData.unit_amount;
-    const oldPrice = subscription.items.data[0].price?.unit_amount;
 
-    // Ensure newPrice and oldPrice are not null
-    if (newPrice === null || oldPrice === null) {
-      throw new Error('Price data is invalid.');
-    }
+payment =   (29 dollar) on top   -->count 3
+"price_1PYvRL2MXTg6eduPnXNBuoQr"
 
-    // Calculate the difference amount
-    const differenceAmount = newPrice - oldPrice;
+price_1Pae1Q2MXTg6eduPBl70uvLa
+price_1Pae1Q2MXTg6eduPBl70uvLa
+"price_1Pae1Q2MXTg6eduPBl70uvLa"
 
-    // Create an invoice item for the difference amount
-    await stripe.invoiceItems.create({
-      customer: subscription.customer as string,
-      amount: differenceAmount,
-      currency: 'usd',
-      description: 'Upgrade charge',
-    });
 
-    // Finalize the invoice immediately
-    const invoice = await stripe.invoices.create({
-      customer: subscription.customer as string,
-      collection_method: 'charge_automatically',
-    });
-
-    await stripe.invoices.finalizeInvoice(invoice.id);
-
-    // Update the subscription to the new price without prorating
-    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
-      items: [{
-        id: subscription.items.data[0].id,
-        price: newPriceId,
-      }],
-      proration_behavior: 'none', // No proration handled by subscription update
-    });
-
-    res.status(200).json({ status: 'true', msg: 'Subscription upgraded and upgrade charge applied', data: updatedSubscription });
-  } catch (error: any) {
-    console.error('Error upgrading subscription:', error);
-    res.status(500).json({ status: 'false', msg: 'Something went wrong', error: error.message || error });
-  }
+user will charge 35 dollar next invoice . 
+ 29 dollar should be archived with 0 subscription
+ no payment after edit

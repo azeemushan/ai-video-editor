@@ -37,20 +37,20 @@ const Login: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ csrfToken, authProviders, recaptchaSiteKey }) => {
   const router = useRouter();
-  const { status,data } = useSession();
+  const { status, data } = useSession();
   const { t } = useTranslation('common');
   const [recaptchaToken, setRecaptchaToken] = useState<string>('');
   const [message, setMessage] = useState<Message>({ text: null, status: null });
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
-  const { error, success, token, callbackUrl } = router.query as {
+  const { error, success, token, callbackUrl, fromPricing } = router.query as {
     error: string;
     success: string;
     token: string;
     callbackUrl: string;
+    fromPricing: string;
   };
-
 
   const handlePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
@@ -64,14 +64,22 @@ const Login: NextPageWithLayout<
     if (success) {
       setMessage({ text: success, status: 'success' });
     }
-  }, [error, success]);
 
-  
+    if (fromPricing) {
+      setMessage({
+        text: 'Please log in before starting the subscription.',
+        status: 'info',
+      });
+    }
+  }, [error, success, fromPricing]);
 
-  const redirectUrl = callbackUrl || (token
-    ? `/invitations/${token}`
-    : (data?.user.user_type === "USER" ? env.redirectIfAuthenticated : '/admin/dashboard'));
-
+  const redirectUrl =
+    callbackUrl ||
+    (token
+      ? `/invitations/${token}`
+      : data?.user.user_type === 'USER'
+      ? env.redirectIfAuthenticated
+      : '/admin/dashboard');
 
   const formik = useFormik({
     initialValues: {
@@ -122,9 +130,11 @@ const Login: NextPageWithLayout<
         <title>{t('login-title')}</title>
       </Head>
       {message.text && message.status && (
-        <Alert status={message.status} className="mb-5">
-          {t(message.text)}
-        </Alert>
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+          <p>
+            {message.text}
+          </p>
+        </div>
       )}
       <div className="rounded p-6 border">
         <div className="flex gap-2 flex-wrap">
@@ -184,7 +194,7 @@ const Login: NextPageWithLayout<
             </div>
             <div className="mt-3 space-y-3">
               <Button
-              className='text-white'
+                className="text-white"
                 type="submit"
                 color="primary"
                 loading={formik.isSubmitting}
