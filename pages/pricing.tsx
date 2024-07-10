@@ -12,7 +12,6 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
-
 const Pricing: NextPageWithLayout = () => {
   const router = useRouter();
   const { data } = useSession();
@@ -32,7 +31,6 @@ const Pricing: NextPageWithLayout = () => {
       try {
         const res = await axios.get('/api/subscriptionPackages/subPkg');
         const { data } = res.data;
-        
 
         data.sort((a: any, b: any) => {
           if (a.subscription_type === 'BASIC') return -1;
@@ -134,19 +132,22 @@ const Pricing: NextPageWithLayout = () => {
         Subscription_type: subscriptionType,
       })
       .then((res) => {
-        console.log(res.data.status)
-
-        if( res.data.status === 'true'){
-          router.push(res.data.data.url);
-        }
-        else if (res.data.status === 'subscription exist'){
-          
-          
+        if (res.data.status === 'true') {
+          const url = new URL(res.data.data.url);
+          const params = new URLSearchParams(url.search);
+          if (url.pathname === '/auth/login') {
+            params.append('fromPricing', 'true');
+            url.search = params.toString();
+          }
+          router.push(url.toString());
+        } else if (res.data.status === 'subscription exist') {
           toast.error(res.data.message);
-          router.push('/dashboard/manageSubscription')
-
+          router.push('/dashboard/manageSubscription');
+        } else if (res.data.status === 'not_authenticated') {
+          // Redirect to login page with fromPricing query parameter
+          const callbackUrl = encodeURIComponent('/pricing');
+          router.push(`/auth/login?callbackUrl=${callbackUrl}&fromPricing=true`);
         }
-        
       });
   };
   
@@ -160,7 +161,14 @@ const Pricing: NextPageWithLayout = () => {
             status: true,
           });
           const activeSubscription = res.data.data; // assuming the first one is the active subscription
+          console.log('Active subscription:', activeSubscription); // Debugging log
           setCurrentSubscription(activeSubscription);
+          // Set planType based on current subscription duration type
+          if (activeSubscription.subscriptionPackage.sub_dur_type === 'YEARLY') {
+            setPlanType('yearly');
+          } else {
+            setPlanType('monthly');
+          }
         } catch (error) {
           console.error('Error fetching current subscription:', error);
         }
@@ -168,6 +176,12 @@ const Pricing: NextPageWithLayout = () => {
       fetchSubscription();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (router.query.from === 'upload') {
+      toast.error('You need to buy a subscription to upload videos.');
+    }
+  }, [router.query]);
 
   if (loading) {
     return <Loading />;
@@ -186,13 +200,17 @@ const Pricing: NextPageWithLayout = () => {
           <div className="mx-auto mb-8 inline-flex gap-2 items-center justify-center bg-slate-200 p-1 rounded-2xl">
             <button
               onClick={() => setPlanType('monthly')}
-              className={`px-6 py-3 h-12 rounded-xl ${planType === 'monthly' ? 'border bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+              className={`px-6 py-3 h-12 rounded-xl ${
+                planType === 'monthly' ? 'border bg-white text-slate-950' : 'bg-transparent text-slate-950'
+              }`}
             >
               <span className="text-sm font-semibold">{t('Monthly')}</span>
             </button>
             <button
               onClick={() => setPlanType('yearly')}
-              className={`px-6 py-3 h-12  rounded-xl ${planType === 'yearly' ? 'border bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+              className={`px-6 py-3 h-12  rounded-xl ${
+                planType === 'yearly' ? 'border bg-white text-slate-950' : 'bg-transparent text-slate-950'
+              }`}
             >
               <span className="text-sm font-semibold">{t('Yearly')}</span>
               <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
@@ -207,9 +225,8 @@ const Pricing: NextPageWithLayout = () => {
                 className={`flex-1 p-12 rounded-2xl relative ${plan.cardClass}`}
               >
                 {currentSubscription &&
-                  currentSubscription.stripe_priceId ===
-                    plan.stripe_priceId && (
-                      <span className="bg-[#333030] text-white text-base font-medium absolute -top-[17px] left-[86px] px-5 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
+                  currentSubscription.stripe_priceId === plan.stripe_priceId && (
+                    <span className="bg-[#333030] text-white text-base font-medium absolute -top-[17px] left-[86px] px-5 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
                       {t('current-plan')}
                     </span>
                   )}
@@ -220,23 +237,19 @@ const Pricing: NextPageWithLayout = () => {
                   </div>
                   <h3 className="text-4xl md:text-5xl font-semibold mt-8 flex items-baseline">
                     <span>{plan.price}</span>
-                    <p className="text-lg font-sans font-normal">
-                      {plan.period}
-                    </p>
+                    <p className="text-lg font-sans font-normal">{plan.period}</p>
                   </h3>
                   {currentSubscription &&
                   currentSubscription.stripe_priceId === plan.stripe_priceId ? (
-                    <Link href='/dashboard/manageSubscription' >
-                    <button
-                      className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
-                      
-                    >
-                      <span className="text-sm font-semibold whitespace-nowrap">
-                        {t('manage-subscription-card')}
-                      </span>
-                    </button>
+                    <Link href="/dashboard/manageSubscription">
+                      <button
+                        className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
+                      >
+                        <span className="text-sm font-semibold whitespace-nowrap">
+                          {t('manage-subscription-card')}
+                        </span>
+                      </button>
                     </Link>
-
                   ) : (
                     <button
                       className={`mt-8 w-full px-6 py-3 h-12 rounded-xl ${plan.buttonClass} relative flex items-center gap-2 justify-center border transition-none`}
@@ -249,7 +262,6 @@ const Pricing: NextPageWithLayout = () => {
                       </span>
                     </button>
                   )}
-
                   <p className="text-sm font-normal mt-4 text-slate-500">
                     {t('secured-stripe')}
                   </p>

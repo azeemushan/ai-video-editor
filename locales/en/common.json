@@ -402,6 +402,9 @@
       "heading": "11. Entire Agreement",
       "content": "These Terms constitute the entire agreement between you and us regarding the use of our Service, superseding any prior agreements regarding the use of our Service."
     }
-  }
+  },
+  "no-subscription": "You have no current Subscription!",
+  "subscription-cancelled": "Subscription Cancelled",
+  "your-subscription-will-end-on": "Your Subscription will end on"
 
 }

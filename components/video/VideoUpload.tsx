@@ -64,7 +64,7 @@ const VideoUpload: React.FC = () => {
         setLoading(false);
 
         if (response.data.data === 'payment') {
-          router.push(`/pricing`);
+          router.push(`/pricing?from=upload`);
           return;
         }
 

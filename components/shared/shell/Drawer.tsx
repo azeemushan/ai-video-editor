@@ -60,8 +60,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                         <>
                           <li>
                             <Link href="/admin/dashboard">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <FaTachometerAlt className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                                <FaTachometerAlt className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                                 <span className="ms-3">{t('Dashboard')}</span>
                               </div>
                             </Link>
@@ -69,8 +69,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
 
                           <li>
                             <Link href="/admin/subPkg/subscription">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <FaInbox className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                                <FaInbox className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                                 <span className="flex-1 ms-3 whitespace-nowrap">
                                   {t('sub-pkg')}
                                 </span>
@@ -79,8 +79,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                           </li>
                           <li>
                             <Link href="/admin/subscription">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <MdOutlineSubscriptions className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                                <MdOutlineSubscriptions className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
 
                                 <span className="flex-1 ms-3 whitespace-nowrap">
                                   {t('subscriptions')}
@@ -91,8 +91,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
 
                           <li>
                             <Link href="/admin/contacts">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <MdOutlineSubscriptions className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                                <MdOutlineSubscriptions className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
 
                                 <span className="flex-1 ms-3 whitespace-nowrap">
                                   {t('contacts')}
@@ -107,8 +107,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                         <>
                           <li>
                             <Link href="/dashboard">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <FaTachometerAlt className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                                <FaTachometerAlt className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                                 <span className="ms-3">{t('Dashboard')}</span>
                               </div>
                             </Link>
@@ -116,7 +116,7 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
 
                           <li>
                             <Link href="/dashboard/manageSubscription">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
                                 <MdManageHistory className="w-8 h-8 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                 <span className="ms-3">{t('manage-subscription-card')}</span>
                               </div>
@@ -208,8 +208,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                   <>
                     <li>
                       <Link href="/admin/dashboard">
-                        <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                          <FaTachometerAlt className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                          <FaTachometerAlt className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                           <span className="ms-3">{t('Dashboard')}</span>
                         </div>
                       </Link>
@@ -217,8 +217,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
 
                     <li>
                       <Link href="/admin/subPkg/subscription">
-                        <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                          <FaInbox className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                          <FaInbox className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                           <span className="flex-1 ms-3 whitespace-nowrap">
                             {t('sub-pkg')}
                           </span>
@@ -227,8 +227,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                     </li>
                     <li>
                       <Link href="/admin/subscription">
-                        <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                          <MdOutlineSubscriptions className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                          <MdOutlineSubscriptions className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
 
                           <span className="flex-1 ms-3 whitespace-nowrap">
                             {t('subscriptions')}
@@ -239,8 +239,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
 
                     <li>
                       <Link href="/admin/contacts">
-                        <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                          <MdOutlineSubscriptions className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                          <MdOutlineSubscriptions className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
 
                           <span className="flex-1 ms-3 whitespace-nowrap">
                             {t('contacts')}
@@ -255,8 +255,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                   <>
                     <li>
                       <Link href="/dashboard">
-                        <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                          <FaTachometerAlt className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                          <FaTachometerAlt className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                           <span className="ms-3">{t('Dashboard')}</span>
                         </div>
                       </Link>
@@ -265,8 +265,8 @@ const Drawer = ({ sidebarOpen, setSidebarOpen }: DrawerProps) => {
                     
                     <li>
                             <Link href="/dashboard/manageSubscription">
-                              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer">
-                                <MdManageHistory className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                              <div className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transform transition-transform hover:scale-105 shadow-md">
+                                <MdManageHistory className="bg-[#976FE0] text-white p-1 w-6 h-6 rounded shadow-lg  " />
                                 <span className="ms-3">{t('manage-subscription-card')}</span>
                               </div>
                             </Link>
