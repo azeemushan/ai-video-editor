@@ -2,6 +2,9 @@ import React from 'react';
 import { FaTimesCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
+import { GetServerSidePropsContext } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import env from '@/lib/env';
 
 const PaymentFailed = () => {
     const { t } = useTranslation('common');
@@ -21,6 +24,25 @@ const PaymentFailed = () => {
       </div>
     </div>
   );
+};
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Redirect to login page if landing page is disabled
+  if (env.hideLandingPage) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: true,
+      },
+    };
+  }
+
+  const { locale } = context;
+
+  return {
+    props: {
+      ...(locale ? await serverSideTranslations(locale, ['common']) : {}),
+    },
+  };
 };
 
 PaymentFailed.getLayout = function getLayout(page) {
