@@ -96,23 +96,24 @@ const Pricing: NextPageWithLayout = () => {
       <h1 className="text-4xl md:text-5xl font-semibold font-display my-8">{t('Plans')}</h1>
       <p className="text-xl font-sans font-normal text-slate-600 my-8">{t('no-hidden-fee')}</p>
       <div className="max-w-5xl mx-auto px-3 text-center">
-        <div className="mx-auto mb-8 inline-flex gap-2 items-center justify-center bg-slate-200 p-1 rounded-2xl">
-          <button
-            onClick={() => setPlanType('monthly')}
-            className={`px-6 py-3 h-12 rounded-xl ${planType === 'monthly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
-          >
-            <span className="text-sm font-semibold">{t('Monthly')}</span>
-          </button>
-          <button
-            onClick={() => setPlanType('yearly')}
-            className={`px-6 py-3 h-12 rounded-xl ${planType === 'yearly' ? 'border  bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
-          >
-            <span className="text-sm font-semibold">{t('Yearly')}</span>
-            <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
-              {t('save-190')}
-            </span>
-          </button>
-        </div>
+      <div className="mx-auto mb-8 inline-flex flex-col sm:flex-row gap-2 items-center justify-center bg-slate-200 p-1 rounded-2xl">
+  <button
+    onClick={() => setPlanType('monthly')}
+    className={`px-4 py-2 h-12 rounded-xl ${planType === 'monthly' ? 'border bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+  >
+    <span className="text-sm font-semibold">{t('Monthly')}</span>
+  </button>
+  <button
+    onClick={() => setPlanType('yearly')}
+    className={`px-4 py-2 h-12 rounded-xl ${planType === 'yearly' ? 'border bg-white text-slate-950' : 'bg-transparent text-slate-950'}`}
+  >
+    <span className="text-sm font-semibold">{t('Yearly')}</span>
+    <span className="text-xs font-normal rounded-full px-2 py-0.5 bg-green-300 text-green-950 ml-2">
+      {t('save-190')}
+    </span>
+  </button>
+</div>
+
         <div className="flex flex-col md:flex-row gap-8 justify-center">
           {pricingPlans[planType]?.map((plan: any) => (
             <section key={plan.id} className={`flex-1 p-12 rounded-2xl ${plan.cardClass}`}>
